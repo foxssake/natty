@@ -19,5 +19,9 @@
     "eslint-plugin-promise": "^6.0.0",
     "jsdoc": "^4.0.2",
     "utap": "^0.2.0"
+  },
+  "dependencies": {
+    "@elementbound/nlon": "^1.0.0",
+    "@elementbound/nlon-socket": "^1.0.0"
   }
 }
