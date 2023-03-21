@@ -12,7 +12,6 @@
 -->
 
 - [ ] Documentation is up to date
-- [ ] Package exports are up to date
 - [ ] Versions are bumped as needed
 
 ### 🔗 Related issues
