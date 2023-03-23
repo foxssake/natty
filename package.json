@@ -7,7 +7,8 @@
     "lint": "eslint src/*.mjs src/*/*.mjs",
     "doc": "jsdoc -c .jsdoc.js src",
     "test": "node --test test/spec/ | utap",
-    "test:e2e": "node --test test/e2e/ | node scripts/taplog.mjs utap pino-pretty",
+    "test:e2e":
+      "node --test test/e2e/ | node scripts/taplog.mjs utap \"pino-pretty -c\"",
     "start": "node . | pino-pretty"
   },
   "keywords": [],

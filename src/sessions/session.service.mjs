@@ -4,11 +4,13 @@ import { SessionRepository } from './session.repository.mjs'
 /* eslint-enable */
 import { nanoid } from 'nanoid'
 import { fail } from 'node:assert'
+import logger from '../logger.mjs'
 
 /**
 * Service for managing sessions.
 */
 export class SessionService {
+  #log
   /** @type {SessionRepository} */
   #sessionRepository
   /** @type {UserRepository} */
@@ -23,6 +25,7 @@ export class SessionService {
   constructor (options) {
     this.#sessionRepository = options.sessionRepository ?? fail('Session repository is required!')
     this.#userRepository = options.userRepository ?? fail('User repository is required!')
+    this.#log = logger.child({ name: 'SessionService' })
   }
 
   /**
@@ -41,6 +44,7 @@ export class SessionService {
       userId: user.id
     })
 
+    this.#log.info({ user, session }, 'Created session for user')
     return session.id
   }
 
@@ -67,5 +71,7 @@ export class SessionService {
 
     this.#sessionRepository.remove(id)
     this.#userRepository.remove(session.userId)
+
+    this.#log.info({ sessionId: id, userId: session.userId }, 'Destroyed session')
   }
 }

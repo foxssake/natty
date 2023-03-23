@@ -16,8 +16,8 @@ async function taplog (tapFormat, logFormat) {
   })
 
   const tapLines = []
-  const tap = chp.spawn(tapFormat)
-  const log = chp.spawn(logFormat)
+  const tap = chp.exec(tapFormat)
+  const log = chp.exec(logFormat)
 
   let testPass = true
 

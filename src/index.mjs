@@ -25,7 +25,7 @@ export function natty () {
 
   /** @type {nlon.Server} */
   const nlons = wrapSocketServer(socket, {
-    logger: logger.child({}, { name: 'nlons' })
+    logger: logger.child({ name: 'nlons' })
   })
 
   // Setup modules

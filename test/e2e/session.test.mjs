@@ -7,7 +7,7 @@ import { NattyClient } from '../../src/natty.client.mjs'
 import config from '../../src/config.mjs'
 
 describe('Sessions', { concurrency: false }, async () => {
-  const log = logger.child({}, { name: 'test' })
+  const log = logger.child({ name: 'test' })
 
   /** @type {NattyClient} */
   let client
