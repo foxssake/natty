@@ -1,11 +1,18 @@
 /* eslint-disable */
 import * as nlon from '@elementbound/nlon'
 /* eslint-enable */
-
 import * as net from 'node:net'
 import { wrapSocketServer } from '@elementbound/nlon-socket'
 import logger from './logger.mjs'
 import config from './config.mjs'
+
+import { Users } from './users/index.mjs'
+import { Sessions } from './sessions/index.mjs'
+
+const modules = {
+  Users,
+  Sessions
+}
 
 /**
   * Run app
@@ -24,13 +31,17 @@ function main () {
     logger.info('Listening on %s:%s', config.socket.host, config.socket.port)
   )
 
-  nlons.handle('echo', async (_peer, corr) => {
-    for await (const message of corr.all()) {
-      corr.write(message)
-    }
+  // Setup modules
+  logger.info('Setting up modules...')
+  for (const [name, m] of Object.entries(modules)) {
+    logger.info('Initializing %s', name)
 
-    corr.finish()
-  })
+    if (typeof m.onHost === 'function') {
+      logger.info('Configuring %s', name)
+      m.onHost(nlons)
+    }
+  }
+  logger.info('Setup done')
 }
 
 main()

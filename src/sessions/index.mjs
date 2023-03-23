@@ -1,6 +1,7 @@
 import { SessionRepository } from './session.repository.mjs'
 import { SessionService } from './session.service.mjs'
 import { Users } from '../users/index.mjs'
+import { sessionSubjects } from './session.subjects.mjs'
 
 export * from './session.data.mjs'
 export * from './session.repository.mjs'
@@ -14,5 +15,7 @@ const service = new SessionService({
 
 export const Sessions = Object.freeze({
   repository,
-  service
+  service,
+
+  onHost: host => sessionSubjects(host)
 })
