@@ -4,7 +4,7 @@
   "description": "Online multiplayer orchestrator and potential game platform",
   "main": "src/index.mjs",
   "scripts": {
-    "lint": "eslint src/*.mjs",
+    "lint": "eslint src/*.mjs src/*/*.mjs",
     "doc": "jsdoc -c .jsdoc.js src",
     "test": "node --test test/ | utap",
     "start": "node . | pino-pretty"
@@ -26,6 +26,7 @@
     "@elementbound/nlon": "^1.0.1",
     "@elementbound/nlon-socket": "^1.0.1",
     "dotenv": "^16.0.3",
+    "nanoid": "^4.0.1",
     "pino": "^8.11.0"
   }
 }

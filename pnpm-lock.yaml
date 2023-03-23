@@ -10,6 +10,7 @@ specifiers:
   eslint-plugin-n: ^15.0.0
   eslint-plugin-promise: ^6.0.0
   jsdoc: ^4.0.2
+  nanoid: ^4.0.1
   pino: ^8.11.0
   pino-pretty: ^10.0.0
   utap: ^0.2.0
@@ -18,6 +19,7 @@ dependencies:
   '@elementbound/nlon': 1.0.1
   '@elementbound/nlon-socket': 1.0.1
   dotenv: 16.0.3
+  nanoid: 4.0.1
   pino: 8.11.0
 
 devDependencies:
