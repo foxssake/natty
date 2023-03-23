@@ -6,6 +6,7 @@ import { Sessions } from './index.mjs'
 
 function registerSchemas (ajv) {
   ajv.addSchema({
+    type: 'object',
     properties: {
       name: { type: 'string' }
     }

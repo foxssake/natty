@@ -8,6 +8,7 @@ import config from './config.mjs'
 
 import { Users } from './users/index.mjs'
 import { Sessions } from './sessions/index.mjs'
+import { pathToFileURL } from 'node:url'
 
 const modules = {
   Users,
@@ -17,7 +18,7 @@ const modules = {
 /**
   * Run app
   */
-function main () {
+export function natty () {
   logger.info('Starting Natty')
 
   const socket = net.createServer()
@@ -26,10 +27,6 @@ function main () {
   const nlons = wrapSocketServer(socket, {
     logger: logger.child({}, { name: 'nlons' })
   })
-
-  socket.listen(config.socket.port, config.socket.host, () =>
-    logger.info('Listening on %s:%s', config.socket.host, config.socket.port)
-  )
 
   // Setup modules
   logger.info('Setting up modules...')
@@ -41,7 +38,24 @@ function main () {
       m.onHost(nlons)
     }
   }
+
   logger.info('Setup done')
+
+  // Resolve
+  return new Promise(resolve => {
+    socket.listen(config.socket.port, config.socket.host, () => {
+      logger.info('Listening on %s:%s', config.socket.host, config.socket.port)
+      resolve({
+        terminate: () => {
+          logger.info('Shutting down')
+          socket.close()
+          nlons.disconnect(socket)
+        }
+      })
+    })
+  })
 }
 
-main()
+if (import.meta.url === pathToFileURL(process.argv[1]).href) {
+  natty()
+}

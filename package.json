@@ -1,12 +1,13 @@
 {
   "name": "@foxssake/natty",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Online multiplayer orchestrator and potential game platform",
   "main": "src/index.mjs",
   "scripts": {
     "lint": "eslint src/*.mjs src/*/*.mjs",
     "doc": "jsdoc -c .jsdoc.js src",
-    "test": "node --test test/ | utap",
+    "test": "node --test test/spec/ | utap",
+    "test:e2e": "node --test test/e2e/ | node scripts/taplog.mjs utap pino-pretty",
     "start": "node . | pino-pretty"
   },
   "keywords": [],
