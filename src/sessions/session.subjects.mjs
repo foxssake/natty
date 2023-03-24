@@ -1,5 +1,6 @@
 /* eslint-disable */
 import { Server } from '@elementbound/nlon'
+import logger from '../logger.mjs'
 /* eslint-enable */
 import { ajv, requireSchema } from '../validation.mjs'
 import { Sessions } from './index.mjs'
@@ -21,6 +22,7 @@ export function sessionSubjects (server) {
   const sessionService = Sessions.service
   registerSchemas(ajv)
 
+  logger.debug({ server }, 'Registering subject')
   server.handle('session/login', async (peer, corr) => {
     // TODO: Handle no data ( i.e. Symbol.End )
     const request = await corr.next(requireSchema('session/login'))

@@ -51,7 +51,7 @@ export function startCleanupJob (options) {
 
   // TODO: Shutdown job when terminating Natty
   log.info('Launching cleanup job every %d ms', interval)
-  setInterval(
+  return setInterval(
     () => cleanupSessions(options),
     interval
   )

@@ -1,5 +1,7 @@
 import * as dotenv from 'dotenv'
 
+/** @module config */
+
 dotenv.config()
 
 /**
@@ -43,16 +45,24 @@ const loglevels = [
 
 const env = process.env
 
-export default Object.freeze({
-  socket: {
+/**
+* Natty configuration type.
+*/
+export class NattyConfig {
+  socket = {
     host: env.NATTY_SOCKET_HOST ?? '::1',
     port: integer(env.NATTY_SOCKET_PORT) ?? 8808
-  },
+  }
 
-  session: {
+  session = {
     timeout: number(env.NATTY_SESSION_TIMEOUT) ?? 3600 * 1000,
     cleanupInterval: number(env.NATTY_SESSION_CLEANUP_INTERVAL) ?? 600 * 1000
-  },
+  }
 
-  loglevel: enumerated(env.NATTY_LOGLEVEL, loglevels) ?? 'info'
-})
+  loglevel = enumerated(env.NATTY_LOGLEVEL, loglevels) ?? 'info'
+}
+
+/** @type {NattyConfig} */
+const config = Object.freeze(new NattyConfig())
+
+export default config

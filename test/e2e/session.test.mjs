@@ -1,10 +1,16 @@
 import { createSocketPeer } from '@elementbound/nlon-socket'
 import { describe, it, after, before } from 'node:test'
 import { ok } from 'node:assert'
-import { natty } from '../../src/index.mjs'
 import logger from '../../src/logger.mjs'
 import { NattyClient } from '../../src/natty.client.mjs'
 import config from '../../src/config.mjs'
+import { Natty } from '../../src/natty.mjs'
+
+function promiseEvent (source, event) {
+  return new Promise(resolve => {
+    source.on(event, resolve)
+  })
+}
 
 describe('Sessions', { concurrency: false }, async () => {
   const log = logger.child({ name: 'test' })
@@ -12,12 +18,16 @@ describe('Sessions', { concurrency: false }, async () => {
   /** @type {NattyClient} */
   let client
 
-  /** @type {object} */
-  let nattyHandle
+  /** @type {Natty} */
+  let natty
 
   before(async () => {
     log.info('Starting app')
-    nattyHandle = await natty()
+    natty = new Natty(config)
+    await natty.start()
+
+    log.info('Waiting for Natty to start')
+    await promiseEvent(natty, 'listening')
 
     log.info('Creating client')
     const peer = createSocketPeer({
@@ -53,6 +63,6 @@ describe('Sessions', { concurrency: false }, async () => {
     client.peer.disconnect()
 
     log.info('Terminating Natty')
-    nattyHandle.terminate()
+    natty.shutdown()
   })
 })
