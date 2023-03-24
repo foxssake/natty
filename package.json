@@ -3,13 +3,16 @@
   "version": "0.2.0",
   "description": "Online multiplayer orchestrator and potential game platform",
   "main": "src/index.mjs",
+  "bin": {
+    "natty": "bin/natty.mjs"
+  },
   "scripts": {
     "lint": "eslint src/*.mjs src/*/*.mjs",
     "doc": "jsdoc -c .jsdoc.js src",
     "test": "node --test test/spec/ | utap",
     "test:e2e":
       "node --test test/e2e/ | node scripts/taplog.mjs utap \"pino-pretty -c\"",
-    "start": "node . | pino-pretty"
+    "start": "node bin/natty.mjs | pino-pretty"
   },
   "keywords": [],
   "author": "Tamas Galffy",

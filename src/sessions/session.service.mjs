@@ -1,4 +1,5 @@
 /* eslint-disable */
+import { Peer } from '@elementbound/nlon'
 import { UserRepository } from '../users/user.repository.mjs'
 import { SessionRepository } from './session.repository.mjs'
 /* eslint-enable */
@@ -31,9 +32,10 @@ export class SessionService {
   /**
   * Create a session.
   * @param {string} username Username
+  * @param {Peer} peer Peer initiating session
   * @returns {string} Session id
   */
-  create (username) {
+  create (username, peer) {
     const user = this.#userRepository.add({
       id: nanoid(),
       name: username
@@ -41,7 +43,20 @@ export class SessionService {
 
     const session = this.#sessionRepository.add({
       id: nanoid(),
-      userId: user.id
+      userId: user.id,
+      peer
+    })
+
+    peer.on('disconnect', () => {
+      this.#log.info({ session: session.id },
+        'Peer disconnected, releasing session')
+      this.destroy(session.id)
+    })
+
+    peer.on('correspondence', () => {
+      this.#log.debug({ session: session.id },
+        'Refreshing session due to new correspondence')
+      session.lastMessage = +new Date()
     })
 
     this.#log.info({ user, session }, 'Created session for user')

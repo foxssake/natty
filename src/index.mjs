@@ -19,7 +19,7 @@ const modules = {
   * Run app
   */
 export function natty () {
-  logger.info('Starting Natty')
+  logger.info({ config }, 'Starting Natty with configuration')
 
   const socket = net.createServer()
 
@@ -54,8 +54,4 @@ export function natty () {
       })
     })
   })
-}
-
-if (import.meta.url === pathToFileURL(process.argv[1]).href) {
-  natty()
 }

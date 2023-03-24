@@ -25,7 +25,7 @@ async function taplog (tapFormat, logFormat) {
   log.stdout.pipe(process.stdout)
 
   reader.on('line', line => {
-    const logRegex = /#\s*\{/
+    const logRegex = /^\s*#*\s*{/
     const failRegex = /\s*not ok \d+/
 
     if (logRegex.test(line)) {

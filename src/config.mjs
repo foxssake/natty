@@ -14,6 +14,17 @@ function integer (value) {
 }
 
 /**
+* Parse config value as number
+*
+* @param {any} value Value
+* @returns {number?} Number or undefined
+*/
+function number (value) {
+  const result = parseFloat(value)
+  return isNaN(result) ? undefined : result
+}
+
+/**
   * Parse config value as enum.
   *
   * @param {any} value Value
@@ -36,6 +47,11 @@ export default Object.freeze({
   socket: {
     host: env.NATTY_SOCKET_HOST ?? '::1',
     port: integer(env.NATTY_SOCKET_PORT) ?? 8808
+  },
+
+  session: {
+    timeout: number(env.NATTY_SESSION_TIMEOUT) ?? 3600 * 1000,
+    cleanupInterval: number(env.NATTY_SESSION_CLEANUP_INTERVAL) ?? 600 * 1000
   },
 
   loglevel: enumerated(env.NATTY_LOGLEVEL, loglevels) ?? 'info'

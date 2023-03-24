@@ -92,6 +92,14 @@ export class Repository {
   }
 
   /**
+  * List all items in repository.
+  * @returns {IterableIterator<T>} Items
+  */
+  list () {
+    return this.#items.values()
+  }
+
+  /**
   * Remove item by id.
   * @param {K} id Item id
   * @returns {boolean} Whether any item was deleted

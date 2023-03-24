@@ -21,12 +21,12 @@ export function sessionSubjects (server) {
   const sessionService = Sessions.service
   registerSchemas(ajv)
 
-  server.handle('session/login', async (_p, corr) => {
+  server.handle('session/login', async (peer, corr) => {
     // TODO: Handle no data ( i.e. Symbol.End )
     const request = await corr.next(requireSchema('session/login'))
     const { name } = request
 
-    const session = sessionService.create(name)
+    const session = sessionService.create(name, peer)
     corr.finish({ session })
   })
 
