@@ -1,5 +1,5 @@
+import { NattyConfig } from '../src/config.mjs'
 import { Natty } from '../src/natty.mjs'
-import config from '../src/config.mjs'
 
-const natty = new Natty(config)
+const natty = new Natty(new NattyConfig())
 natty.start()

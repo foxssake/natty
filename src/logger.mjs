@@ -1,9 +1,10 @@
 import pino from 'pino'
-import config from './config.mjs'
+import { NattyConfig } from './config.mjs'
 
 const logger = pino({
   name: 'natty',
-  level: config.loglevel
+  // TODO: Can this be done easier?
+  level: (new NattyConfig()).loglevel
 })
 
 export default logger

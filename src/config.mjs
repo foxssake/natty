@@ -61,8 +61,3 @@ export class NattyConfig {
 
   loglevel = enumerated(env.NATTY_LOGLEVEL, loglevels) ?? 'info'
 }
-
-/** @type {NattyConfig} */
-const config = Object.freeze(new NattyConfig())
-
-export default config

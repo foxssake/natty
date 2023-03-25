@@ -1,9 +1,8 @@
 import { SessionRepository } from './session.repository.mjs'
 import { SessionService } from './session.service.mjs'
-import { Users } from '../users/index.mjs'
+import { userRepository } from '../users/index.mjs'
 import { sessionSubjects } from './session.subjects.mjs'
 import { startCleanupJob } from './session.cleanup.mjs'
-import config from '../config.mjs'
 import { Natty } from '../natty.mjs'
 import logger from '../logger.mjs'
 
@@ -13,10 +12,10 @@ export * from './session.service.mjs'
 
 const log = logger.child({ name: 'Sessions' })
 
-const repository = new SessionRepository()
-const service = new SessionService({
-  userRepository: Users.repository,
-  sessionRepository: repository
+export const sessionRepository = new SessionRepository()
+export const sessionService = new SessionService({
+  userRepository,
+  sessionRepository
 })
 
 Natty.hook(natty => {
@@ -25,19 +24,14 @@ Natty.hook(natty => {
 
   log.info('Starting session cleanup job')
   const cleanupJob = startCleanupJob({
-    timeout: config.session.timeout,
-    interval: config.session.cleanupInterval,
-    sessionRepository: repository,
-    sessionService: service
+    timeout: natty.config.session.timeout,
+    interval: natty.config.session.cleanupInterval,
+    sessionRepository,
+    sessionService
   })
 
   natty.on('close', () => {
     log.info('Natty shutting down, cancelling session cleanup job')
     clearInterval(cleanupJob)
   })
-})
-
-export const Sessions = Object.freeze({
-  repository,
-  service
 })

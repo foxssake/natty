@@ -3,7 +3,7 @@ import { Server } from '@elementbound/nlon'
 import logger from '../logger.mjs'
 /* eslint-enable */
 import { ajv, requireSchema } from '../validation.mjs'
-import { Sessions } from './index.mjs'
+import { sessionService } from './index.mjs'
 
 function registerSchemas (ajv) {
   ajv.addSchema({
@@ -19,7 +19,6 @@ function registerSchemas (ajv) {
 * @param {Server} server nlon server
 */
 export function sessionSubjects (server) {
-  const sessionService = Sessions.service
   registerSchemas(ajv)
 
   logger.debug({ server }, 'Registering subject')

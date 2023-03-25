@@ -1,10 +1,10 @@
 import { createSocketPeer } from '@elementbound/nlon-socket'
 import { describe, it, after, before } from 'node:test'
-import { ok } from 'node:assert'
+import { ok, rejects, throws } from 'node:assert'
 import logger from '../../src/logger.mjs'
 import { NattyClient } from '../../src/natty.client.mjs'
-import config from '../../src/config.mjs'
 import { Natty } from '../../src/natty.mjs'
+import { NattyConfig } from '../../src/config.mjs'
 
 function promiseEvent (source, event) {
   return new Promise(resolve => {
@@ -23,7 +23,7 @@ describe('Sessions', { concurrency: false }, async () => {
 
   before(async () => {
     log.info('Starting app')
-    natty = new Natty(config)
+    natty = new Natty(new NattyConfig())
     await natty.start()
 
     log.info('Waiting for Natty to start')
@@ -32,7 +32,7 @@ describe('Sessions', { concurrency: false }, async () => {
     log.info('Creating client')
     const peer = createSocketPeer({
       host: 'localhost',
-      port: config.socket.port
+      port: natty.config.socket.port
     })
 
     client = new NattyClient(peer)
@@ -53,6 +53,10 @@ describe('Sessions', { concurrency: false }, async () => {
 
   it('should logout', async () => {
     await client.session.logout()
+  })
+
+  it('should reject logout without auth', async () => {
+    rejects(() => client.session.logout())
   })
 
   after(() => {

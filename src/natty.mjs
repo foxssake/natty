@@ -41,7 +41,8 @@ export class Natty extends EventEmitter {
   constructor (config) {
     super()
 
-    this.#config = config ?? fail('Config required!')
+    config ?? fail('Config required!')
+    this.#config = Object.freeze({ ...config })
   }
 
   async start (modules) {
@@ -94,5 +95,9 @@ export class Natty extends EventEmitter {
 
   get nlons () {
     return this.#nlons
+  }
+
+  get config () {
+    return this.#config
   }
 }
