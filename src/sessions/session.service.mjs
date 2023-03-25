@@ -6,6 +6,9 @@ import { SessionRepository } from './session.repository.mjs'
 import { nanoid } from 'nanoid'
 import { fail } from 'node:assert'
 import logger from '../logger.mjs'
+import { timestamp } from '../utils.mjs'
+import { SessionData } from './session.data.mjs'
+import { User } from '../users/user.mjs'
 
 /**
 * Service for managing sessions.
@@ -36,16 +39,16 @@ export class SessionService {
   * @returns {string} Session id
   */
   create (username, peer) {
-    const user = this.#userRepository.add({
+    const user = this.#userRepository.add(new User({
       id: nanoid(),
       name: username
-    })
+    }))
 
-    const session = this.#sessionRepository.add({
+    const session = this.#sessionRepository.add(new SessionData({
       id: nanoid(),
       userId: user.id,
       peer
-    })
+    }))
 
     peer.on('disconnect', () => {
       this.#log.info({ session: session.id },
@@ -56,7 +59,7 @@ export class SessionService {
     peer.on('correspondence', () => {
       this.#log.debug({ session: session.id },
         'Refreshing session due to new correspondence')
-      session.lastMessage = +new Date()
+      session.lastMessage = timestamp()
     })
 
     this.#log.info({ user, session }, 'Created session for user')

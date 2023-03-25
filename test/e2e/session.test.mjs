@@ -5,12 +5,7 @@ import logger from '../../src/logger.mjs'
 import { NattyClient } from '../../src/natty.client.mjs'
 import { Natty } from '../../src/natty.mjs'
 import { NattyConfig } from '../../src/config.mjs'
-
-function promiseEvent (source, event) {
-  return new Promise(resolve => {
-    source.on(event, resolve)
-  })
-}
+import { promiseEvent, sleep } from '../../src/utils.mjs'
 
 describe('Sessions', { concurrency: false }, async () => {
   const log = logger.child({ name: 'test' })
@@ -23,7 +18,11 @@ describe('Sessions', { concurrency: false }, async () => {
 
   before(async () => {
     log.info('Starting app')
-    natty = new Natty(new NattyConfig())
+    const config = new NattyConfig()
+    config.session.timeout = 0.050
+    config.session.cleanupInterval = 0.010
+
+    natty = new Natty(config)
     await natty.start()
 
     log.info('Waiting for Natty to start')
@@ -56,6 +55,17 @@ describe('Sessions', { concurrency: false }, async () => {
   })
 
   it('should reject logout without auth', async () => {
+    rejects(() => client.session.logout())
+  })
+
+  it('should cleanup session', async () => {
+    await client.session.login('foo')
+
+    await sleep(
+      natty.config.session.timeout +
+      natty.config.session.cleanupInterval
+    )
+
     rejects(() => client.session.logout())
   })
 

@@ -3,6 +3,7 @@ import { SessionRepository } from './session.repository.mjs'
 import { SessionService } from './session.service.mjs'
 /* eslint-enable */
 import logger from '../logger.mjs'
+import { timestamp } from '../utils.mjs'
 
 const log = logger.child({ name: 'SessionCleanup' })
 
@@ -16,14 +17,14 @@ const log = logger.child({ name: 'SessionCleanup' })
 */
 export function cleanupSessions (options) {
   const { timeout, sessionRepository, sessionService } = options
-  const currentTime = +new Date()
+  const currentTime = timestamp()
 
   const expiredSessions = []
   let sessionCount = 0
   log.debug('Gathering expired sessions')
   for (const session of sessionRepository.list()) {
     ++sessionCount
-    log.info(
+    log.debug(
       { currentTime, session },
       'Session id %s has age %d',
       session.id, currentTime - session.lastMessage
