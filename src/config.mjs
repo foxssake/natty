@@ -2,8 +2,6 @@ import * as dotenv from 'dotenv'
 import { integer, number } from './config.parsers.mjs'
 import { getLogLevel } from './logger.mjs'
 
-/** @module config */
-
 dotenv.config()
 
 const env = process.env

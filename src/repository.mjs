@@ -78,7 +78,6 @@ export class Repository {
   * @returns {T | undefined} Item or undefined
   */
   find (id) {
-    // TODO: Consider freezing?
     return this.#items.get(id)
   }
 

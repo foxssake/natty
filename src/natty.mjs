@@ -90,7 +90,6 @@ export class Natty extends EventEmitter {
     this.emit('close')
 
     this.#socket.close()
-    this.#nlons.disconnect() // TODO: Is this needed?
   }
 
   get nlons () {

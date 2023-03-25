@@ -3,6 +3,12 @@ import { Peer } from '@elementbound/nlon'
 /* eslint-enable */
 import { fail } from 'node:assert'
 
+/**
+* Generic base class for Natty flow clients.
+*
+* A new client class should be created for every Natty feature ( e.g. sessions )
+* and implement calls related to it.
+*/
 export class Client {
   /** @type {object} */
   #context

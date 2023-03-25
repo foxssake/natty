@@ -1,12 +1,11 @@
 /* eslint-disable */
 import { Server } from '@elementbound/nlon'
+/* eslint-enable */
 import { ajv } from '../ajv.mjs'
-import logger from '../logger.mjs'
 import { requireBody } from '../validators/require.body.mjs'
 import { requireAuthorization } from '../validators/require.header.mjs'
 import { requireSchema } from '../validators/require.schema.mjs'
 import { sessionRepository, sessionService } from './sessions.mjs'
-/* eslint-enable */
 import { requireSession } from './validation.mjs'
 
 function registerSchemas (ajv) {
@@ -25,7 +24,6 @@ function registerSchemas (ajv) {
 export function sessionSubjects (server) {
   registerSchemas(ajv)
 
-  logger.debug({ server }, 'Registering subject')
   server.handle('session/login', async (peer, corr) => {
     const request = await corr.next(
       requireBody(),

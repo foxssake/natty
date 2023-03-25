@@ -15,13 +15,13 @@ export const sessionService = new SessionService({
 })
 
 Natty.hook(natty => {
-  log.info({ natty, nlons: natty.nlons ?? '???' }, 'Registering session subjects')
+  log.info('Registering session subjects')
   natty.nlons.configure(sessionSubjects)
 
   log.info('Starting session cleanup job')
   const cleanupJob = startCleanupJob({
-    timeout: natty.config.session.timeout,
-    interval: natty.config.session.cleanupInterval,
+    timeout: natty.config.session.timeout * 1000,
+    interval: natty.config.session.cleanupInterval * 1000,
     sessionRepository,
     sessionService
   })
