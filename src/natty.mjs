@@ -1,12 +1,12 @@
 /* eslint-disable */
 import * as nlon from '@elementbound/nlon'
+import { NattyConfig } from './config.mjs'
 /* eslint-enable */
 import * as net from 'node:net'
 import { fail } from 'node:assert'
 import { EventEmitter } from 'node:events'
 import { wrapSocketServer } from '@elementbound/nlon-socket'
 import logger from './logger.mjs'
-import { NattyConfig } from './config.mjs'
 
 const defaultModules = [
   'sessions/sessions.mjs'

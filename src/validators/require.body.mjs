@@ -1,4 +1,4 @@
-import { Correspondence } from "@elementbound/nlon"
+import { Correspondence } from '@elementbound/nlon'
 
 export class MissingBodyError extends Error { }
 
