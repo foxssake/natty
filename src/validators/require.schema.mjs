@@ -1,8 +1,4 @@
-import Ajv from 'ajv'
-
-export const ajv = new Ajv({
-  allErrors: true
-})
+import { ajv } from '../ajv.mjs'
 
 export class SchemaValidationError extends Error {
   #errors
@@ -31,7 +27,7 @@ export class SchemaValidationError extends Error {
 }
 
 export function requireSchema (schema) {
-  return function (body, header, context) {
+  return function (body, _header, _context) {
     if (!ajv.validate(schema, body)) {
       throw new SchemaValidationError(ajv.errors, body, schema)
     }
