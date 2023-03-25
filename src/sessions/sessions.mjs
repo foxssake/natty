@@ -1,14 +1,10 @@
 import { SessionRepository } from './session.repository.mjs'
 import { SessionService } from './session.service.mjs'
-import { userRepository } from '../users/index.mjs'
+import { userRepository } from '../users/users.mjs'
 import { sessionSubjects } from './session.subjects.mjs'
 import { startCleanupJob } from './session.cleanup.mjs'
 import { Natty } from '../natty.mjs'
 import logger from '../logger.mjs'
-
-export * from './session.data.mjs'
-export * from './session.repository.mjs'
-export * from './session.service.mjs'
 
 const log = logger.child({ name: 'Sessions' })
 

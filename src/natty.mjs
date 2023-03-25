@@ -9,7 +9,7 @@ import logger from './logger.mjs'
 import { NattyConfig } from './config.mjs'
 
 const defaultModules = [
-  'sessions'
+  'sessions/sessions.mjs'
 ]
 
 const hooks = []
@@ -66,7 +66,7 @@ export class Natty extends EventEmitter {
     // Import modules for hooks
     for (const m of modules) {
       this.#log.info('Pulling module %s for hooks', m)
-      await import(`../src/${m}/index.mjs`)
+      await import(`../src/${m}`)
     }
 
     // Run hooks

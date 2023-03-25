@@ -5,8 +5,9 @@ import logger from '../logger.mjs'
 import { requireBody } from '../validators/require.body.mjs'
 import { requireAuthorization } from '../validators/require.header.mjs'
 import { requireSchema } from '../validators/require.schema.mjs'
+import { sessionRepository, sessionService } from './sessions.mjs'
 /* eslint-enable */
-import { sessionService } from './index.mjs'
+import { requireSession } from './validation.mjs'
 
 function registerSchemas (ajv) {
   ajv.addSchema({
@@ -37,16 +38,11 @@ export function sessionSubjects (server) {
   })
 
   server.handle('session/logout', async (_p, corr) => {
-    await corr.next(requireAuthorization())
-    const session = corr.header.authorization
-
-    if (!sessionService.validate(session)) {
-      corr.error({
-        type: 'InvalidSession',
-        message: 'The supplied session token is invalid: ' + session
-      })
-      return
-    }
+    await corr.next(
+      requireAuthorization(),
+      requireSession(sessionRepository, sessionService)
+    )
+    const { session } = corr.context
 
     sessionService.destroy(session)
     corr.finish()
