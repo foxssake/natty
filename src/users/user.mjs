@@ -1,7 +1,10 @@
+import { DataObject } from '../data.mjs'
+
 /**
 * Class representing a User.
+* @extends {DataObject{User}}
 */
-export class User {
+export class User extends DataObject {
   /**
   * User's unique id
   * @type {string}
@@ -13,12 +16,4 @@ export class User {
   * @type {string}
   */
   name
-
-  /**
-  * Construct instance
-  * @param {User} data User data
-  */
-  constructor (data) {
-    data && Object.assign(this, data)
-  }
 }

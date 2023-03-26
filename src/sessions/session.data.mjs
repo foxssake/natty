@@ -1,9 +1,14 @@
 /* eslint-disable */
 import { Peer } from '@elementbound/nlon'
+import { DataObject } from '../data.mjs'
 /* eslint-enable */
 import { timestamp } from '../utils.mjs'
 
-export class SessionData {
+/**
+* Session data.
+* @extends {DataObject<SessionData>}
+*/
+export class SessionData extends DataObject {
   /**
   * Session id
   * @type {string}
@@ -27,12 +32,4 @@ export class SessionData {
   * @type {number}
   */
   lastMessage = timestamp()
-
-  /**
-  * Construct instance.
-  * @param {SessionData} [data] Data
-  */
-  constructor (data) {
-    data && Object.assign(this, data)
-  }
 }
