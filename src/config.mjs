@@ -20,5 +20,7 @@ export class NattyConfig {
     cleanupInterval: number(env.NATTY_SESSION_CLEANUP_INTERVAL) ?? 600
   }
 
+  games = env.NATTY_GAMES ?? ''
+
   loglevel = getLogLevel()
 }

@@ -9,7 +9,8 @@ import { wrapSocketServer } from '@elementbound/nlon-socket'
 import logger from './logger.mjs'
 
 const defaultModules = [
-  'sessions/sessions.mjs'
+  'sessions/sessions.mjs',
+  'games/games.mjs'
 ]
 
 const hooks = []

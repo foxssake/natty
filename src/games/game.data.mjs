@@ -1,10 +1,7 @@
-import { DataObject } from '../data.mjs'
-
 /**
 * Game data.
-* @extends {DataObject<GameData>}
 */
-export class GameData extends DataObject {
+export class GameData {
   /**
   * Game id.
   * @type {string}
@@ -16,4 +13,12 @@ export class GameData extends DataObject {
   * @type {string}
   */
   name
+
+  /**
+  * Construct instance.
+  * @param {GameData} [options] Options
+  */
+  constructor (options) {
+    options && Object.assign(this, options)
+  }
 }
