@@ -17,9 +17,11 @@ import { GameRepository } from './game.repository.mjs'
 export function parseGamesConfig (text) {
   const gameRegex = /(\S*)\s+(.+)/
   return text.split('\n')
+    .map(l => l.trim())
     .filter(l => gameRegex.test(l))
     .map(l => gameRegex.exec(l))
     .map(([_, id, name]) => new GameData({ id, name }))
+    .map(game => Object.freeze(game))
 }
 
 export const gameRepository = new GameRepository()
