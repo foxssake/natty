@@ -1,6 +1,8 @@
 /* eslint-disable */
 import { Server } from '@elementbound/nlon'
 /* eslint-enable */
+import { gameRepository } from '../../games/games.mjs'
+import { requireGame } from '../../games/validation.mjs'
 import { sessionRepository, sessionService } from '../../sessions/sessions.mjs'
 import { requireSession } from '../../sessions/validation.mjs'
 import { requireAuthorization } from '../../validators/require.header.mjs'
@@ -16,23 +18,16 @@ function ListLobbiesResponse (lobbies) {
 * @param {Server} server nlon server
 */
 export function listLobbiesSubject (server) {
-  // ajv.addSchema({
-  //   type: 'object',
-  //   properties: {
-  //     game: { type: 'string' }
-  //   }
-  // }, 'lobby/list')
-
   server.handle('lobby/list', async (peer, corr) => {
     await corr.next(
-      // requireBody(),
-      // requireSchema('lobby/list'),
       requireAuthorization(),
-      requireSession(sessionRepository, sessionService)
+      requireSession(sessionRepository, sessionService),
+      requireGame(gameRepository) // TODO: Get from session
     )
 
-    // TODO: List per game
-    const lobbies = [...lobbyRepository.list()]
+    const game = corr.context.game
+
+    const lobbies = [...lobbyRepository.listByGame(game.id)]
     const chunkSize = 64
     for (let i = 0; i < lobbies.length; i += chunkSize) {
       const chunk = lobbies.slice(i, i + chunkSize)
