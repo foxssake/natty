@@ -9,12 +9,18 @@ export class SessionClient extends Client {
   /**
   * Start session by logging in.
   * @param {string} name Username
+  * @param {string} game Game id
   * @returns {Promise<string>} Session id
   */
-  async login (name) {
+  async login (name, game) {
     const corr = this.peer.send(new Message({
-      header: new MessageHeader({ subject: 'session/login' }),
-      body: { name }
+      header: new MessageHeader({
+        subject: 'session/login',
+        game
+      }),
+      body: {
+        name
+      }
     }))
 
     corr.finish()

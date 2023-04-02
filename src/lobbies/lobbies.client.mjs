@@ -1,16 +1,12 @@
 import { Message, MessageHeader } from '@elementbound/nlon'
-import assert from 'node:assert'
 import { Client } from '../client.mjs'
 
 export class LobbiesClient extends Client {
   async create (name) {
-    assert(this.game, 'Game not set!')
-
     const corr = this.peer.send(new Message({
       header: new MessageHeader({
         subject: 'lobby/create',
-        authorization: this.context.authorization,
-        game: this.game
+        authorization: this.context.authorization
       }),
       body: {
         name
@@ -74,8 +70,7 @@ export class LobbiesClient extends Client {
     const corr = this.peer.send(new Message({
       header: new MessageHeader({
         subject: 'lobby/list',
-        authorization: this.context.authorization,
-        game: this.game
+        authorization: this.context.authorization
       })
     }))
 
@@ -84,18 +79,6 @@ export class LobbiesClient extends Client {
         yield lobby.id
       }
     }
-  }
-
-  /**
-  * Current game id
-  * @type {string}
-  */
-  get game () {
-    return this.context.game
-  }
-
-  set game (v) {
-    this.context.game = v
   }
 
   /** @type {string} */

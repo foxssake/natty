@@ -2,9 +2,8 @@
 import { Server } from '@elementbound/nlon'
 /* eslint-enable */
 import { gameRepository } from '../../games/games.mjs'
-import { requireGame } from '../../games/validation.mjs'
 import { sessionRepository, sessionService } from '../../sessions/sessions.mjs'
-import { requireSession } from '../../sessions/validation.mjs'
+import { requireSession, requireSessionGame } from '../../sessions/validation.mjs'
 import { requireAuthorization } from '../../validators/require.header.mjs'
 import { lobbyRepository } from '../lobbies.mjs'
 
@@ -22,10 +21,10 @@ export function listLobbiesSubject (server) {
     await corr.next(
       requireAuthorization(),
       requireSession(sessionRepository, sessionService),
-      requireGame(gameRepository) // TODO: Get from session
+      requireSessionGame(gameRepository)
     )
 
-    const game = corr.context.game
+    const game = corr.context.sessionGame
 
     const lobbies = [...lobbyRepository.listByGame(game.id)]
     const chunkSize = 64
