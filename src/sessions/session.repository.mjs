@@ -7,11 +7,4 @@ import { Repository } from '../repository.mjs'
 * Repository to manage session data.
 * @extends {Repository<SessionData, string>}
 */
-export class SessionRepository extends Repository {
-  constructor () {
-    super({
-      idMapper: session => session.id,
-      itemMerger: (current, update) => Object.assign(current, update)
-    })
-  }
-}
+export class SessionRepository extends Repository { }
