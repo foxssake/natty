@@ -21,8 +21,8 @@ export class NattyConfig {
   }
 
   lobby = {
-    minNameLength: number(env.NATTY_MIN_NAME_LENGTH) ?? 3,
-    maxNameLength: number(env.NATTY_MAX_NAME_LENGTH) ?? 128
+    minNameLength: number(env.NATTY_LOBBY_MIN_NAME_LENGTH) ?? 3,
+    maxNameLength: number(env.NATTY_LOBBY_MAX_NAME_LENGTH) ?? 128
   }
 
   games = env.NATTY_GAMES ?? ''

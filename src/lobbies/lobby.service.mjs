@@ -6,6 +6,10 @@ import logger from '../logger.mjs'
 import { LobbyData } from './lobby.data.mjs'
 import { nanoid } from 'nanoid'
 import { IdInUseError } from '../repository.mjs'
+import { requireParam } from '../assertions.mjs'
+import { DeleteLobbyNotificationMessage, JoinLobbyNotificationMessage, LeaveLobbyNotificationMessage } from './message.templates.mjs'
+import { NotificationService } from '../notifications/notification.service.mjs'
+import { notificationService } from '../notifications/notifications.mjs'
 
 /**
 * @typedef {object} LobbyNameConfig
@@ -21,6 +25,8 @@ export class LobbyService {
   #lobbyRepository
   /** @type {LobbyParticipantRepository} */
   #participantRepository
+  /** @type {NotificationService} */
+  #notificationService
   /** @type {LobbyNameConfig} */
   #nameConfig
 
@@ -28,16 +34,17 @@ export class LobbyService {
   * Construct service.
   * @param {object} options Options
   * @param {LobbyRepository} options.lobbyRepository Lobby repository
-  * @param {LobbyParticipantRepository} options.lobbyParticipantRepository
+  * @param {LobbyParticipantRepository} options.participantRepository
   *   Lobby participant repository
+  * @param {NotificationService} options.notificationService
+  *   Notification service
   * @param {LobbyNameConfig} options.nameConfig Lobby name rule config
   */
   constructor (options) {
-    this.#lobbyRepository = options.lobbyRepository ??
-      fail('Lobby repository is required!')
-    this.#participantRepository = options.lobbyParticipantRepository ??
-      fail('Lobby participant repository is required!')
-    this.#nameConfig = options.nameConfig ?? fail('Name config is required!')
+    this.#lobbyRepository = requireParam(options.lobbyRepository)
+    this.#participantRepository = requireParam(options.participantRepository)
+    this.#notificationService = requireParam(options.notificationService)
+    this.#nameConfig = requireParam(options.nameConfig)
     this.#log = logger.child({ name: 'LobbyService' })
   }
 
@@ -84,7 +91,11 @@ export class LobbyService {
         : e
     }
 
-    // TODO: Notify participants, including joining user
+    // Notify participants, including joining user
+    this.#notificationService.send({
+      message: JoinLobbyNotificationMessage(user),
+      userIds: this.#participantRepository.getParticipantsOf(lobby.id)
+    }).forEach(c => c.finish()) // TODO: Update to single-message correspondence
   }
 
   /**
@@ -101,7 +112,14 @@ export class LobbyService {
     // Remove user from lobby
     this.#participantRepository.remove(user.id)
 
-    // TODO: Notify participants, including leaving user
+    // Notify participants, including leaving user
+    this.#notificationService.send({
+      message: LeaveLobbyNotificationMessage(user),
+      userIds: [
+        user.id,
+        ...this.#participantRepository.getParticipantsOf(lobby.id)
+      ]
+    }).forEach(c => c.finish()) // TODO: Update to single-message correspondence
   }
 
   /**
@@ -112,9 +130,14 @@ export class LobbyService {
   */
   delete (lobby) {
     // Delete lobby
-    this.#participantRepository.deleteLobby(lobby)
-    this.#lobbyRepository.remove(lobby)
+    const participants = this.#participantRepository.getParticipantsOf(lobby.id)
+    this.#participantRepository.deleteLobby(lobby.id)
+    this.#lobbyRepository.remove(lobby.id)
 
     // TODO: Notify participants of lobby delete
+    notificationService.send({
+      message: DeleteLobbyNotificationMessage(lobby),
+      userIds: participants
+    }).forEach(c => c.finish()) // TODO: Update to single-message correspondence
   }
 }
