@@ -1,4 +1,4 @@
-import { fieldIdMapper, Repository } from '../repository.mjs'
+import { Repository } from '../repository.mjs'
 
 /**
 * Data class linking a user to a lobby.

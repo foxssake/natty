@@ -6,6 +6,7 @@ import { NattyClient } from '../../src/natty.client.mjs'
 import { Natty } from '../../src/natty.mjs'
 import { NattyConfig } from '../../src/config.mjs'
 import { promiseEvent, sleep } from '../../src/utils.mjs'
+import { GameData } from '../../src/games/game.data.mjs'
 
 describe('Sessions', { concurrency: false }, async () => {
   const log = logger.child({ name: 'test' })
@@ -16,11 +17,17 @@ describe('Sessions', { concurrency: false }, async () => {
   /** @type {Natty} */
   let natty
 
+  const game = new GameData({
+    id: 'test001',
+    name: 'Test'
+  })
+
   before(async () => {
     log.info('Starting app')
     const config = new NattyConfig()
     config.session.timeout = 0.050
     config.session.cleanupInterval = 0.010
+    config.games = `${game.id} ${game.name}`
 
     natty = new Natty(config)
     await natty.start()
@@ -44,7 +51,7 @@ describe('Sessions', { concurrency: false }, async () => {
     const username = 'foo'
 
     // When
-    const session = await client.session.login(username)
+    const session = await client.session.login(username, game.id)
 
     // Then
     ok(session)
@@ -59,7 +66,7 @@ describe('Sessions', { concurrency: false }, async () => {
   })
 
   it('should cleanup session', async () => {
-    await client.session.login('foo')
+    await client.session.login('foo', game.id)
 
     await sleep(
       natty.config.session.timeout +
