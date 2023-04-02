@@ -11,6 +11,9 @@
 * @typedef {function(T, T): T} RepositoryItemMerger
 */
 
+export class IdInUseError extends Error { }
+export class UnkownItemError extends Error { }
+
 /**
 * Base class for repositories.
 * @template T,K
@@ -46,7 +49,7 @@ export class Repository {
     const id = this.#idMapper(item)
 
     if (this.has(id)) {
-      throw new Error(`Item already stored with id: ${id}`)
+      throw new IdInUseError(`Item already stored with id: ${id}`)
     }
 
     this.#items.set(id, item)
@@ -63,7 +66,7 @@ export class Repository {
     const id = this.#idMapper(item)
 
     if (!this.has(id)) {
-      throw new Error(`Trying to update unknown item with id: ${id}`)
+      throw new UnkownItemError(`Trying to update unknown item with id: ${id}`)
     }
 
     this.#items.set(id, this.#merger(
@@ -106,6 +109,14 @@ export class Repository {
   remove (id) {
     return this.#items.delete(id)
   }
+}
+
+/**
+* Create an id mapper that grabs the given field of the object.
+* @returns {RepositoryIdMapper}
+*/
+export function fieldIdMapper (field) {
+  return v => v[field]
 }
 
 /**

@@ -21,12 +21,6 @@ export class LobbyData {
   owner
 
   /**
-  * Participating users' id's
-  * @type {string[]}
-  */
-  participants
-
-  /**
   * Construct instance.
   * @param {LobbyData} [options] Options
   */
