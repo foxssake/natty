@@ -1,16 +1,15 @@
 /**
-* Class representing a User.
-* @extends {DataObject<User>}
+* Game data.
 */
-export class User {
+export class GameData {
   /**
-  * User's unique id
+  * Game id.
   * @type {string}
   */
   id
 
   /**
-  * User's nickname
+  * Game name.
   * @type {string}
   */
   name

@@ -3,6 +3,10 @@ import { Peer } from '@elementbound/nlon'
 /* eslint-enable */
 import { timestamp } from '../utils.mjs'
 
+/**
+* Session data.
+* @extends {DataObject<SessionData>}
+*/
 export class SessionData {
   /**
   * Session id
@@ -30,9 +34,9 @@ export class SessionData {
 
   /**
   * Construct instance.
-  * @param {SessionData} [data] Data
+  * @param {GameData} [options] Options
   */
-  constructor (data) {
-    data && Object.assign(this, data)
+  constructor (options) {
+    options && Object.assign(this, options)
   }
 }
