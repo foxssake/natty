@@ -11,6 +11,8 @@ import { DeleteLobbyNotificationMessage, JoinLobbyNotificationMessage, LeaveLobb
 import { NotificationService } from '../notifications/notification.service.mjs'
 import { notificationService } from '../notifications/notifications.mjs'
 
+class LobbyOwnerError extends Error { }
+
 /**
 * @typedef {object} LobbyNameConfig
 * @property {number} minNameLength
@@ -55,6 +57,7 @@ export class LobbyService {
   * @returns {LobbyData} New lobby
   */
   create (name, owner) {
+    // TODO: Move to route
     assert(name.length >= this.#nameConfig.minNameLength, 'Lobby name too short!')
     assert(name.length < this.#nameConfig.maxNameLength, 'Lobby name too long!')
 
@@ -107,6 +110,11 @@ export class LobbyService {
     // Do nothing if user is not part of the given lobby ( or any lobby )
     if (this.#participantRepository.getLobbyOf(user.id) !== lobby.id) {
       return
+    }
+
+    // Deny if user is owner of lobby
+    if (lobby.owner === user.id) {
+      throw new LobbyOwnerError('Can\'t leave own lobby')
     }
 
     // Remove user from lobby
