@@ -34,17 +34,28 @@ export class LobbyParticipant {
 export class LobbyParticipantRepository extends Repository {
   constructor () {
     super({
-      idMapper: fieldIdMapper('userId')
+      idMapper: p => `${p.userId}::${p.lobbyId}`
     })
   }
 
   /**
-  * Find the lobby id the user is part of.
+  * Remove user from lobby.
   * @param {string} userId User id
-  * @returns {string|undefined} Lobby id
+  * @param {string} lobbyId Lobby id
+  * @returns {boolean}
   */
-  getLobbyOf (userId) {
-    return this.find(userId)?.lobbyId
+  removeParticipantFrom (userId, lobbyId) {
+    return this.removeItem({ userId, lobbyId })
+  }
+
+  /**
+  * Check if user is in lobby.
+  * @param {string} userId User id
+  * @param {string} lobbyId Lobby id
+  * @returns {boolean}
+  */
+  isParticipantOf (userId, lobbyId) {
+    return this.hasItem({ userId, lobbyId })
   }
 
   /**

@@ -1,7 +1,11 @@
 /* eslint-disable */
 import { Server } from '@elementbound/nlon'
+import { User } from '../../users/user.mjs'
+import { GameData } from '../../games/game.data.mjs'
 /* eslint-enable */
 import { ajv } from '../../ajv.mjs'
+import { gameRepository } from '../../games/games.mjs'
+import { requireGame } from '../../games/validation.mjs'
 import { sessionRepository, sessionService } from '../../sessions/sessions.mjs'
 import { requireSession, requireSessionUser } from '../../sessions/validation.mjs'
 import { userRepository } from '../../users/users.mjs'
@@ -36,13 +40,18 @@ export function createLobbySubject (server) {
       requireSchema('lobby/create'),
       requireAuthorization(),
       requireSession(sessionRepository, sessionService),
-      requireSessionUser(userRepository)
+      requireSessionUser(userRepository),
+      requireGame(gameRepository)
     )
 
     /** @type {string} */
     const name = request.name
+    /** @type {User} */
+    const user = corr.context.sessionUser
+    /** @type {GameData} */
+    const game = corr.context.game
 
-    const lobby = lobbyService.create(name, corr.context.sessionUser)
+    const lobby = lobbyService.create(name, user, game)
     corr.finish(CreateLobbyResponse(lobby))
   })
 }

@@ -21,6 +21,12 @@ export class LobbyData {
   owner
 
   /**
+  * Associated game's id
+  * @type {string}
+  */
+  game
+
+  /**
   * Construct instance.
   * @param {LobbyData} [options] Options
   */

@@ -21,6 +21,12 @@ export class SessionData {
   userId
 
   /**
+  * Associated game's id
+  * @type {string}
+  */
+  gameId
+
+  /**
   * Peer associated with session
   * @type {Peer}
   */

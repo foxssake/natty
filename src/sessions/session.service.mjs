@@ -2,6 +2,7 @@
 import { Peer } from '@elementbound/nlon'
 import { UserRepository } from '../users/user.repository.mjs'
 import { SessionRepository } from './session.repository.mjs'
+import { GameData } from '../games/game.data.mjs'
 /* eslint-enable */
 import { nanoid } from 'nanoid'
 import { fail } from 'node:assert'
@@ -35,10 +36,11 @@ export class SessionService {
   /**
   * Create a session.
   * @param {string} username Username
+  * @param {GameData} game Game
   * @param {Peer} peer Peer initiating session
   * @returns {string} Session id
   */
-  create (username, peer) {
+  create (username, game, peer) {
     const user = this.#userRepository.add(new User({
       id: nanoid(),
       name: username
@@ -47,6 +49,7 @@ export class SessionService {
     const session = this.#sessionRepository.add(new SessionData({
       id: nanoid(),
       userId: user.id,
+      gameId: game.id,
       peer
     }))
 

@@ -1,17 +1,17 @@
 /* eslint-disable */
 import { Server } from '@elementbound/nlon'
 import { User } from '../../users/user.mjs'
+import { LobbyData } from '../lobby.data.mjs'
 /* eslint-enable */
 import { sessionRepository, sessionService } from '../../sessions/sessions.mjs'
 import { requireSession, requireSessionUser } from '../../sessions/validation.mjs'
 import { userRepository } from '../../users/users.mjs'
 import { requireAuthorization } from '../../validators/require.header.mjs'
-import { lobbyParticipantRepository, lobbyRepository, lobbyService } from '../lobbies.mjs'
+import { lobbyRepository, lobbyService } from '../lobbies.mjs'
 import { ajv } from '../../ajv.mjs'
 import { requireBody } from '../../validators/require.body.mjs'
 import { requireSchema } from '../../validators/require.schema.mjs'
 import { requireLobby } from '../validation.mjs'
-import { LobbyData } from '../lobby.data.mjs'
 
 // TODO: Standard error? Maybe in nlon?
 class UnauthorizedError extends Error { }

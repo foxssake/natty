@@ -85,7 +85,7 @@ export class Repository {
   }
 
   /**
-  * Check if item exists.
+  * Check if item with id exists.
   * @param {K} id Item id
   * @returns {boolean} Whether the item exists
   */
@@ -108,6 +108,24 @@ export class Repository {
   */
   remove (id) {
     return this.#items.delete(id)
+  }
+
+  /**
+  * Check if item exists.
+  * @param {T} item Item
+  * @returns {boolean} Whether the item exists
+  */
+  hasItem (item) {
+    return this.#items.has(this.#idMapper(item))
+  }
+
+  /**
+  * Remove item.
+  * @param {T} item Item
+  * @returns {boolean} Whether any item was deleted
+  */
+  removeItem (item) {
+    return this.#items.delete(this.#idMapper(item))
   }
 }
 

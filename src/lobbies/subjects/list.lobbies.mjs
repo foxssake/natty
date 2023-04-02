@@ -2,7 +2,7 @@
 import { Server } from '@elementbound/nlon'
 /* eslint-enable */
 import { sessionRepository, sessionService } from '../../sessions/sessions.mjs'
-import { requireSession, requireSessionUser } from '../../sessions/validation.mjs'
+import { requireSession } from '../../sessions/validation.mjs'
 import { requireAuthorization } from '../../validators/require.header.mjs'
 import { lobbyRepository } from '../lobbies.mjs'
 

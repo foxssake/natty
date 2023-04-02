@@ -10,6 +10,7 @@ import { requireParam } from '../assertions.mjs'
 import { DeleteLobbyNotificationMessage, JoinLobbyNotificationMessage, LeaveLobbyNotificationMessage } from './message.templates.mjs'
 import { NotificationService } from '../notifications/notification.service.mjs'
 import { notificationService } from '../notifications/notifications.mjs'
+import { GameData } from '../games/game.data.mjs'
 
 class LobbyOwnerError extends Error { }
 
@@ -54,9 +55,10 @@ export class LobbyService {
   * Create a new lobby.
   * @param {string} name Lobby name
   * @param {User} owner Owning user
+  * @param {GameData} game Hosting game
   * @returns {LobbyData} New lobby
   */
-  create (name, owner) {
+  create (name, owner, game) {
     // TODO: Move to route
     assert(name.length >= this.#nameConfig.minNameLength, 'Lobby name too short!')
     assert(name.length < this.#nameConfig.maxNameLength, 'Lobby name too long!')
@@ -65,7 +67,7 @@ export class LobbyService {
       id: nanoid(),
       name,
       owner: owner.id,
-      participants: []
+      game: game.id
     }))
 
     this.join(owner, lobby)
@@ -108,7 +110,7 @@ export class LobbyService {
   */
   leave (user, lobby) {
     // Do nothing if user is not part of the given lobby ( or any lobby )
-    if (this.#participantRepository.getLobbyOf(user.id) !== lobby.id) {
+    if (!this.#participantRepository.isParticipantOf(user.id, lobby.id)) {
       return
     }
 
@@ -118,7 +120,7 @@ export class LobbyService {
     }
 
     // Remove user from lobby
-    this.#participantRepository.remove(user.id)
+    this.#participantRepository.removeParticipantFrom(user.id, lobby.id)
 
     // Notify participants, including leaving user
     this.#notificationService.send({
@@ -142,7 +144,7 @@ export class LobbyService {
     this.#participantRepository.deleteLobby(lobby.id)
     this.#lobbyRepository.remove(lobby.id)
 
-    // TODO: Notify participants of lobby delete
+    // Notify participants of lobby delete
     notificationService.send({
       message: DeleteLobbyNotificationMessage(lobby),
       userIds: participants
