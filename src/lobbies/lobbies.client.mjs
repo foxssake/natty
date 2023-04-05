@@ -2,6 +2,13 @@ import { Message, MessageHeader } from '@elementbound/nlon'
 import { Client } from '../client.mjs'
 
 export class LobbiesClient extends Client {
+  /**
+  * Create a new lobby.
+  *
+  * Saves the lobby id in `context.lobbyId`
+  * @param {string} name Lobby name
+  * @returns {string} Lobby id
+  */
   async create (name) {
     const corr = this.peer.send(new Message({
       header: new MessageHeader({
@@ -21,6 +28,10 @@ export class LobbiesClient extends Client {
     return response.lobby.id
   }
 
+  /**
+  * Deleta a lobby.
+  * @param {string} lobbyId Lobby id
+  */
   async delete (lobbyId) {
     const corr = this.peer.send(new Message({
       header: new MessageHeader({
@@ -38,6 +49,13 @@ export class LobbiesClient extends Client {
     await corr.next()
   }
 
+  /**
+  * Join a lobby.
+  *
+  * Saves the lobby id in `context.lobbyId`
+  * @param {string} lobbyId Lobby id
+  * @returns {string} Lobby id
+  */
   async join (lobbyId) {
     const corr = this.peer.send(new Message({
       header: new MessageHeader({
@@ -53,8 +71,15 @@ export class LobbiesClient extends Client {
 
     corr.finish()
     await corr.next()
+
+    this.context.lobbyId = lobbyId
   }
 
+  /**
+  * Leave the currently joined lobby.
+  *
+  * Resets the lobby id in `context.lobbyId`
+  */
   async leave () {
     const corr = this.peer.send(new Message({
       header: new MessageHeader({
@@ -65,8 +90,14 @@ export class LobbiesClient extends Client {
 
     corr.finish()
     await corr.next()
+
+    this.context.lobbyId = undefined
   }
 
+  /**
+  * List all lobbies.
+  * @returns {AsyncGenerator<string>} Lobby id's
+  */
   async * list () {
     const corr = this.peer.send(new Message({
       header: new MessageHeader({
@@ -82,7 +113,10 @@ export class LobbiesClient extends Client {
     }
   }
 
-  /** @type {string} */
+  /**
+  * Currently joined lobby
+  * @type {string}
+  */
   get lobbyId () {
     return this.context.lobbyId
   }
