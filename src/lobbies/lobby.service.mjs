@@ -63,6 +63,14 @@ export class LobbyService {
     assert(name.length >= this.#nameConfig.minNameLength, 'Lobby name too short!')
     assert(name.length < this.#nameConfig.maxNameLength, 'Lobby name too long!')
 
+    // Check if user is not already in a lobby
+    assert(
+      this.#participantRepository.getLobbiesOf(owner.id)
+        .map(lobbyId => this.#lobbyRepository.find(lobbyId))
+        .every(lobby => lobby.game !== game),
+      'User is already in a lobby!'
+    )
+
     const lobby = this.#lobbyRepository.add(new LobbyData({
       id: nanoid(),
       name,

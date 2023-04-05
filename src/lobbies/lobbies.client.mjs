@@ -18,6 +18,7 @@ export class LobbiesClient extends Client {
     const response = await corr.next()
 
     this.context.lobbyId = response.lobby.id
+    return response.lobby.id
   }
 
   async delete (lobbyId) {

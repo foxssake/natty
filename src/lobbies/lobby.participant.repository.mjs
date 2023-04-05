@@ -70,6 +70,17 @@ export class LobbyParticipantRepository extends Repository {
   }
 
   /**
+  * Find all lobbies the user is participating in.
+  * @param {string} userId User id
+  * @returns {string[]} List of lobby id's
+  */
+  getLobbiesOf (userId) {
+    return [...this.list()]
+      .filter(p => p.userId === userId)
+      .map(p => p.lobbyId)
+  }
+
+  /**
   * Delete a lobby by removing all participants from it.
   * @param {string} lobbyId Lobby id
   */
