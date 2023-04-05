@@ -1,5 +1,7 @@
+/* eslint-disable */
 import { Correspondence, Message, Peer } from '@elementbound/nlon'
 import { SessionRepository } from '../sessions/session.repository.mjs'
+/* eslint-enable */
 import { requireParam } from '../assertions.mjs'
 
 export class NotificationService {

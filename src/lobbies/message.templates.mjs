@@ -1,6 +1,8 @@
-import { Message, MessageHeader, MessageTypes } from '@elementbound/nlon'
+/* eslint-disable */
 import { User } from '../users/user.mjs'
 import { LobbyData } from './lobby.data.mjs'
+/* eslint-enable */
+import { Message, MessageHeader } from '@elementbound/nlon'
 
 const Subjects = Object.freeze({
   Join: 'lobby/notif/join',

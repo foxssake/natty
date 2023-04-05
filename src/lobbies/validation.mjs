@@ -1,4 +1,6 @@
+/* eslint-disable */
 import { LobbyRepository } from './lobby.repository.mjs'
+/* eslint-enable */
 
 class InvalidLobbyError extends Error { }
 

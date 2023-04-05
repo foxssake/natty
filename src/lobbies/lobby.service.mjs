@@ -1,16 +1,17 @@
+/* eslint-disable */
 import { User } from '../users/user.mjs'
 import { LobbyRepository } from './lobby.repository.mjs'
 import { LobbyParticipant, LobbyParticipantRepository } from './lobby.participant.repository.mjs'
-import assert, { fail } from 'node:assert'
+import { GameData } from '../games/game.data.mjs'
+import { NotificationService } from '../notifications/notification.service.mjs'
+/* eslint-enable */
+import assert from 'node:assert'
 import logger from '../logger.mjs'
 import { LobbyData } from './lobby.data.mjs'
 import { nanoid } from 'nanoid'
 import { IdInUseError } from '../repository.mjs'
 import { requireParam } from '../assertions.mjs'
 import { DeleteLobbyNotificationMessage, JoinLobbyNotificationMessage, LeaveLobbyNotificationMessage } from './message.templates.mjs'
-import { NotificationService } from '../notifications/notification.service.mjs'
-import { notificationService } from '../notifications/notifications.mjs'
-import { GameData } from '../games/game.data.mjs'
 
 class LobbyOwnerError extends Error { }
 
@@ -153,7 +154,7 @@ export class LobbyService {
     this.#lobbyRepository.remove(lobby.id)
 
     // Notify participants of lobby delete
-    notificationService.send({
+    this.#notificationService.send({
       message: DeleteLobbyNotificationMessage(lobby),
       userIds: participants
     }).forEach(c => c.finish()) // TODO: Update to single-message correspondence
