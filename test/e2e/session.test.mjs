@@ -6,9 +6,12 @@ import { NattyClient } from '../../src/natty.client.mjs'
 import { Natty } from '../../src/natty.mjs'
 import { NattyConfig } from '../../src/config.mjs'
 import { promiseEvent, sleep } from '../../src/utils.mjs'
+import { GameData } from '../../src/games/game.data.mjs'
+import { End2EndContext } from './context.mjs'
 
 describe('Sessions', { concurrency: false }, async () => {
   const log = logger.child({ name: 'test' })
+  const context = new End2EndContext()
 
   /** @type {NattyClient} */
   let client
@@ -16,27 +19,22 @@ describe('Sessions', { concurrency: false }, async () => {
   /** @type {Natty} */
   let natty
 
+  const game = new GameData({
+    id: 'test001',
+    name: 'Test'
+  })
+
   before(async () => {
     log.info('Starting app')
-    const config = new NattyConfig()
+    const config = context.config
     config.session.timeout = 0.050
     config.session.cleanupInterval = 0.010
+    config.games = `${game.id} ${game.name}`
 
-    natty = new Natty(config)
-    await natty.start()
+    await context.startup()
 
-    log.info('Waiting for Natty to start')
-    await promiseEvent(natty, 'listening')
-
-    log.info('Creating client')
-    const peer = createSocketPeer({
-      host: 'localhost',
-      port: natty.config.socket.port
-    })
-
-    client = new NattyClient(peer)
-
-    log.info('Setup done, starting tests')
+    natty = context.natty
+    client = context.connect()
   })
 
   it('should start new session', async () => {
@@ -44,7 +42,7 @@ describe('Sessions', { concurrency: false }, async () => {
     const username = 'foo'
 
     // When
-    const session = await client.session.login(username)
+    const session = await client.session.login(username, game.id)
 
     // Then
     ok(session)
@@ -59,7 +57,7 @@ describe('Sessions', { concurrency: false }, async () => {
   })
 
   it('should cleanup session', async () => {
-    await client.session.login('foo')
+    await client.session.login('foo', game.id)
 
     await sleep(
       natty.config.session.timeout +
@@ -70,13 +68,6 @@ describe('Sessions', { concurrency: false }, async () => {
   })
 
   after(() => {
-    log.info('Disconnecting peer stream')
-    client.peer.stream.destroy()
-
-    log.info('Shutting down peer')
-    client.peer.disconnect()
-
-    log.info('Terminating Natty')
-    natty.shutdown()
+    context.shutdown()
   })
 })

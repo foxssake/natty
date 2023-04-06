@@ -10,7 +10,8 @@ import logger from './logger.mjs'
 
 const defaultModules = [
   'sessions/sessions.mjs',
-  'games/games.mjs'
+  'games/games.mjs',
+  'lobbies/lobbies.mjs'
 ]
 
 const hooks = []

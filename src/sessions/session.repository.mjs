@@ -8,10 +8,13 @@ import { Repository } from '../repository.mjs'
 * @extends {Repository<SessionData, string>}
 */
 export class SessionRepository extends Repository {
-  constructor () {
-    super({
-      idMapper: session => session.id,
-      itemMerger: (current, update) => Object.assign(current, update)
-    })
+  /**
+  * Find all sessions of the given user(s).
+  * @param {...string} userIds User id's
+  * @returns {SessionData[]} Sessions
+  */
+  findSessionsOf (...userIds) {
+    return [...this.list()]
+      .filter(s => userIds.includes(s.userId))
   }
 }

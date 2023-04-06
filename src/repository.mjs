@@ -11,6 +11,9 @@
 * @typedef {function(T, T): T} RepositoryItemMerger
 */
 
+export class IdInUseError extends Error { }
+export class UnkownItemError extends Error { }
+
 /**
 * Base class for repositories.
 * @template T,K
@@ -27,13 +30,13 @@ export class Repository {
 
   /**
   * Construct repository.
-  * @param {object} options Options
-  * @param {RepositoryIdMapper} options.idMapper Id mapper
-  * @param {RepositoryItemMerger} options.itemMerger Item merger
+  * @param {object} [options] Options
+  * @param {RepositoryIdMapper} [options.idMapper=idFieldMapper()] Id mapper
+  * @param {RepositoryItemMerger} [options.itemMerger=assignMerger()] Item merger
   */
   constructor (options) {
-    this.#idMapper = options.idMapper
-    this.#merger = options.itemMerger
+    this.#idMapper = options?.idMapper ?? idFieldMapper()
+    this.#merger = options?.itemMerger ?? assignMerger()
   }
 
   /**
@@ -46,7 +49,7 @@ export class Repository {
     const id = this.#idMapper(item)
 
     if (this.has(id)) {
-      throw new Error(`Item already stored with id: ${id}`)
+      throw new IdInUseError(`Item already stored with id: ${id}`)
     }
 
     this.#items.set(id, item)
@@ -63,7 +66,7 @@ export class Repository {
     const id = this.#idMapper(item)
 
     if (!this.has(id)) {
-      throw new Error(`Trying to update unknown item with id: ${id}`)
+      throw new UnkownItemError(`Trying to update unknown item with id: ${id}`)
     }
 
     this.#items.set(id, this.#merger(
@@ -82,7 +85,7 @@ export class Repository {
   }
 
   /**
-  * Check if item exists.
+  * Check if item with id exists.
   * @param {K} id Item id
   * @returns {boolean} Whether the item exists
   */
@@ -106,4 +109,47 @@ export class Repository {
   remove (id) {
     return this.#items.delete(id)
   }
+
+  /**
+  * Check if item exists.
+  * @param {T} item Item
+  * @returns {boolean} Whether the item exists
+  */
+  hasItem (item) {
+    return this.#items.has(this.#idMapper(item))
+  }
+
+  /**
+  * Remove item.
+  * @param {T} item Item
+  * @returns {boolean} Whether any item was deleted
+  */
+  removeItem (item) {
+    return this.#items.delete(this.#idMapper(item))
+  }
+}
+
+/**
+* Create an id mapper that grabs the given field of the object.
+* @returns {RepositoryIdMapper}
+*/
+export function fieldIdMapper (field) {
+  return v => v[field]
+}
+
+/**
+* Create an id mapper that grabs the `id` field of the object.
+* @returns {RepositoryIdMapper}
+*/
+export function idFieldMapper () {
+  return v => v.id
+}
+
+/**
+* Create an item merger that uses Object.assign to update the object without
+* changing the reference.
+* @returns {RepositoryItemMerger}
+*/
+export function assignMerger () {
+  return (current, update) => Object.assign(current, update)
 }

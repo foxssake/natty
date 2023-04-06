@@ -20,6 +20,11 @@ export class NattyConfig {
     cleanupInterval: number(env.NATTY_SESSION_CLEANUP_INTERVAL) ?? 600
   }
 
+  lobby = {
+    minNameLength: number(env.NATTY_LOBBY_MIN_NAME_LENGTH) ?? 3,
+    maxNameLength: number(env.NATTY_LOBBY_MAX_NAME_LENGTH) ?? 128
+  }
+
   games = env.NATTY_GAMES ?? ''
 
   loglevel = getLogLevel()
