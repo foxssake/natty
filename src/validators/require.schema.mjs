@@ -1,35 +1,33 @@
 import { ajv } from '../ajv.mjs'
+import { requireParam } from '../assertions.mjs'
+import { Validator } from './validator.mjs'
 
-export class SchemaValidationError extends Error {
-  #errors
-  #body
+export class SchemaValidationError extends Error { }
+
+export class SchemaValidator extends Validator {
+  #ajv
   #schema
 
-  constructor (errors, body, schema) {
-    super('Input data doesn\'t fit schema!')
-
-    this.#errors = errors
-    this.#body = body
-    this.#schema = schema
+  /**
+  * Construct validator
+  * @param {object} options Options
+  * @param {ajv} options.ajv ajv
+  * @param {string} options.schema Schema name
+  */
+  constructor (options) {
+    super()
+    this.#ajv = requireParam(options.ajv)
+    this.#schema = requireParam(options.schema)
   }
 
-  get errors () {
-    return this.#errors
-  }
-
-  get body () {
-    return this.#body
-  }
-
-  get schema () {
-    return this.#schema
+  validate (body, _header, _context) {
+    if (!this.#ajv.validate(this.#schema, body)) {
+      throw new SchemaValidationError('Body does not match schema!')
+    }
   }
 }
 
 export function requireSchema (schema) {
-  return function (body, _header, _context) {
-    if (!ajv.validate(schema, body)) {
-      throw new SchemaValidationError(ajv.errors, body, schema)
-    }
-  }
+  const validator = new SchemaValidator({ ajv, schema })
+  return validator.validate.bind(validator)
 }
