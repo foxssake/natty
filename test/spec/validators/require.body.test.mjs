@@ -32,7 +32,7 @@ describe('BodyPresenceValidator', () => {
       const context = {}
 
       // When + then
-      assert.throws(() => 
+      assert.throws(() =>
         validator.validate(body, header, context)
       )
     })
