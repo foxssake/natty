@@ -15,4 +15,8 @@ export class Validator {
   validate (body, header, context) {
     // validate
   }
+
+  asFunction () {
+    return this.validate.bind(this)
+  }
 }

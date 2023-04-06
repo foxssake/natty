@@ -28,6 +28,5 @@ export class SchemaValidator extends Validator {
 }
 
 export function requireSchema (schema) {
-  const validator = new SchemaValidator({ ajv, schema })
-  return validator.validate.bind(validator)
+  return new SchemaValidator({ ajv, schema }).asFunction()
 }
