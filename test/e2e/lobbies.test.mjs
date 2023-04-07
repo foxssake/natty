@@ -15,13 +15,20 @@ describe('Lobbies', { concurrency: false }, async () => {
 
     context.log.info('Creating session')
     client = context.connect()
-
-    await client.session.login('foo', 'test001')
   })
 
-  it('should create lobby', async () => {
-    context.log.info('Creating lobby')
-    await client.lobbies.create('Test lobby')
+  describe('create', () => {
+    it('should reject without auth', () => {
+      assert.rejects(() => client.lobbies.create('Test lobby'))
+    })
+
+    it('should create lobby', async () => {
+      context.log.info('Logging in')
+      await client.session.login('foo', 'test001')
+
+      context.log.info('Creating lobby')
+      await client.lobbies.create('Test lobby')
+    })
   })
 
   it('should list lobbies', async () => {
