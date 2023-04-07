@@ -12,7 +12,7 @@
 */
 
 export class IdInUseError extends Error { }
-export class UnkownItemError extends Error { }
+export class UnknownItemError extends Error { }
 
 /**
 * Base class for repositories.
@@ -66,7 +66,7 @@ export class Repository {
     const id = this.#idMapper(item)
 
     if (!this.has(id)) {
-      throw new UnkownItemError(`Trying to update unknown item with id: ${id}`)
+      throw new UnknownItemError(`Trying to update unknown item with id: ${id}`)
     }
 
     this.#items.set(id, this.#merger(
