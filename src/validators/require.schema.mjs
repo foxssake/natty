@@ -27,6 +27,11 @@ export class SchemaValidator extends Validator {
   }
 }
 
+/**
+* Validates that the message body fits the given schema.
+* @param {string} schema Schema name
+* @returns {ReadHandler}
+*/
 export function requireSchema (schema) {
   return new SchemaValidator({ ajv, schema }).asFunction()
 }

@@ -14,6 +14,10 @@ export class BodyPresenceValidator extends Validator {
 const validatorInstance = new BodyPresenceValidator()
 const validatorFunction = validatorInstance.asFunction()
 
+/**
+* Validate that there is a message body present.
+* @returns {ReadHandler}
+*/
 export function requireBody () {
   return validatorFunction
 }
