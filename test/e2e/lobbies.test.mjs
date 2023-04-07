@@ -1,6 +1,9 @@
+/* eslint-disable */
+import { NattyClient } from '../../src/natty.client.mjs'
+/* eslint-enable */
+
 import { describe, it, after, before } from 'node:test'
 import assert from 'node:assert'
-import { NattyClient } from '../../src/natty.client.mjs'
 import { End2EndContext } from './context.mjs'
 
 describe('Lobbies', { concurrency: false }, async () => {
