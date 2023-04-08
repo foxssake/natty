@@ -17,7 +17,7 @@ export class User {
 
   /**
   * Construct instance.
-  * @param {GameData} [options] Options
+  * @param {User} [options] Options
   */
   constructor (options) {
     options && Object.assign(this, options)

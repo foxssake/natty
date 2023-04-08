@@ -68,7 +68,7 @@ export class LobbyService {
     assert(
       this.#participantRepository.getLobbiesOf(owner.id)
         .map(lobbyId => this.#lobbyRepository.find(lobbyId))
-        .every(lobby => lobby.game !== game),
+        .every(lobby => lobby.game !== game.id),
       'User is already in a lobby!'
     )
 

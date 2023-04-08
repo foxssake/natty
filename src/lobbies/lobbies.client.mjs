@@ -7,7 +7,7 @@ export class LobbiesClient extends Client {
   *
   * Saves the lobby id in `context.lobbyId`
   * @param {string} name Lobby name
-  * @returns {string} Lobby id
+  * @returns {Promise<string>} Lobby id
   */
   async create (name) {
     const corr = this.peer.send(new Message({
