@@ -30,7 +30,8 @@ describe('Lobbies', { concurrency: false }, async () => {
       await client.session.login('foo', 'test001')
 
       context.log.info('Creating lobby')
-      await client.lobbies.create('Test lobby')
+      const lobbyId = await client.lobbies.create('Test lobby')
+      assert(lobbyId)
     })
   })
 
