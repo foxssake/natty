@@ -49,7 +49,7 @@ work for the given lobby.
 1. When someone leaves a lobby
   1. Delete all connection attempts that affect the leaving player
 1. When a new connection attempt is added
-  1. Ask both participants to do a *handshake*
+  1. Ask both participants to do a [handshake](./handshake.md)
   1. Once both participants ack'd, set attempt state to `running`
   1. Wait for both participants to respond
     1. Set attempt to success *only if* both participants respond with success
