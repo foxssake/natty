@@ -5,14 +5,16 @@ import { LobbyParticipant, LobbyParticipantRepository } from './lobby.participan
 import { GameData } from '../games/game.data.mjs'
 import { NotificationService } from '../notifications/notification.service.mjs'
 /* eslint-enable */
-import assert, { fail } from 'node:assert'
+import assert from 'node:assert'
 import logger from '../logger.mjs'
 import { LobbyData } from './lobby.data.mjs'
 import { nanoid } from 'nanoid'
 import { requireParam } from '../assertions.mjs'
 import { DeleteLobbyNotificationMessage, JoinLobbyNotificationMessage, LeaveLobbyNotificationMessage } from './message.templates.mjs'
 
-class LobbyOwnerError extends Error { }
+export class LobbyOwnerError extends Error { }
+
+export class AlreadyInLobbyError extends Error { }
 
 /**
 * @typedef {object} LobbyNameConfig
@@ -75,7 +77,7 @@ export class LobbyService {
         'Can\'t create lobby for user, they\'re already in a lobby'
       )
 
-      fail('User is already in a lobby!')
+      throw new AlreadyInLobbyError('User is already in a lobby!')
     }
 
     const lobby = this.#lobbyRepository.add(new LobbyData({
@@ -113,7 +115,7 @@ export class LobbyService {
         'Can\'t add user to lobby, they\'re already in another'
       )
 
-      fail('User is already in a lobby!')
+      throw new AlreadyInLobbyError('User is already in a lobby!')
     }
 
     // Add user to lobby
