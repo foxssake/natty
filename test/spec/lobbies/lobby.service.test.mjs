@@ -21,10 +21,15 @@ describe('LobbyService', () => {
   /** @type {LobbyService} */
   let lobbyService
 
-  beforeEach(() => {
+  function setup () {
     lobbyRepository = mockClass(LobbyRepository, Repository)
     participantRepository = mockClass(LobbyParticipantRepository, Repository)
     notificationService = mockClass(NotificationService)
+
+    participantRepository.getLobbiesOf = mock.fn(() => [])
+    participantRepository.add = mock.fn(item => item)
+    lobbyRepository.add = mock.fn(item => item)
+    notificationService.send = mock.fn(() => [])
 
     lobbyService = new LobbyService({
       nameConfig: {
@@ -35,19 +40,16 @@ describe('LobbyService', () => {
       participantRepository,
       notificationService
     })
-  })
+  }
 
   describe('create', () => {
+    beforeEach(setup)
+
     it('should create lobby', () => {
       // Given
       const lobbyName = 'test'
       const ownerUser = new User({ id: 'a', name: 'b' })
       const game = new GameData({ id: 'foo', name: 'Foo game' })
-
-      participantRepository.getLobbiesOf = mock.fn(() => [])
-      participantRepository.add = mock.fn(item => item)
-      lobbyRepository.add = mock.fn(item => item)
-      notificationService.send = mock.fn(() => [])
 
       // When
       const actual = lobbyService.create(lobbyName, ownerUser, game)
@@ -65,11 +67,7 @@ describe('LobbyService', () => {
       const ownerUser = new User({ id: 'a', name: 'b' })
       const game = new GameData({ id: 'foo', name: 'Foo game' })
 
-      participantRepository.getLobbiesOf = mock.fn(() => [])
       participantRepository.getParticipantsOf = mock.fn(lobby => [ownerUser.id])
-      participantRepository.add = mock.fn(item => item)
-      lobbyRepository.add = mock.fn(item => item)
-      notificationService.send = mock.fn(() => [])
 
       // When
       lobbyService.create(lobbyName, ownerUser, game)
@@ -111,7 +109,7 @@ describe('LobbyService', () => {
     it('should reject when already in lobby', () => {
       // Given
       const lobbyName = 'test'
-      const ownerUser = new User({ id: 'a', name: 'b' })
+      const ownerUser = new User({ id: 'usr-reject', name: 'b' })
       const game = new GameData({ id: 'foo', name: 'Foo game' })
       const currentLobby = new LobbyData({
         id: '0xtest',
@@ -120,12 +118,86 @@ describe('LobbyService', () => {
         owner: ownerUser.id
       })
 
-      participantRepository.getLobbiesOf = mock.fn(() => ['0xtest'])
+      participantRepository.getLobbiesOf = mock.fn(() => [currentLobby.id])
       lobbyRepository.find = mock.fn(() => currentLobby)
 
       // When + then
       assert.throws(
         () => lobbyService.create(lobbyName, ownerUser, game),
+        e => e.message === 'User is already in a lobby!'
+      )
+    })
+  })
+
+  describe('join', () => {
+    beforeEach(setup)
+
+    it('should join lobby', () => {
+      // Given
+      const owner = new User({
+        id: 'usr-owner',
+        name: 'Owner user'
+      })
+
+      const user = new User({
+        id: 'usr-join',
+        name: 'Joining user'
+      })
+
+      const lobby = new LobbyData({
+        id: 'l001',
+        game: 'g001',
+        name: 'Target lobby',
+        owner: owner.id
+      })
+
+      participantRepository.getParticipantsOf = mock.fn(
+        () => [owner.id, user.id]
+      )
+
+      // When
+      lobbyService.join(user, lobby)
+
+      // Then
+      assert.equal(notificationService.send.mock.callCount(), 1)
+      assert.deepEqual(
+        notificationService.send.mock.calls[0].arguments[0].userIds,
+        [owner.id, user.id]
+      )
+    })
+
+    it('should reject if already in lobby', () => {
+      // Given
+      const owner = new User({
+        id: 'usr-owner',
+        name: 'Owner user'
+      })
+
+      const user = new User({
+        id: 'usr-join',
+        name: 'Joining user'
+      })
+
+      const currentLobby = new LobbyData({
+        id: 'l002',
+        game: 'g001',
+        name: 'Current lobby',
+        owner: user.id
+      })
+
+      const lobby = new LobbyData({
+        id: 'l001',
+        game: 'g001',
+        name: 'Target lobby',
+        owner: owner.id
+      })
+
+      participantRepository.getLobbiesOf = mock.fn(() => [currentLobby.id])
+      lobbyRepository.find = mock.fn(() => currentLobby)
+
+      // When + then
+      assert.throws(
+        () => lobbyService.join(user, lobby),
         e => e.message === 'User is already in a lobby!'
       )
     })

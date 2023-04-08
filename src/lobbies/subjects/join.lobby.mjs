@@ -10,10 +10,8 @@ import { userRepository } from '../../users/users.mjs'
 import { requireBody } from '../../validators/require.body.mjs'
 import { requireAuthorization } from '../../validators/require.header.mjs'
 import { requireSchema } from '../../validators/require.schema.mjs'
-import { lobbyParticipantRepository, lobbyRepository, lobbyService } from '../lobbies.mjs'
+import { lobbyRepository, lobbyService } from '../lobbies.mjs'
 import { requireLobby } from '../validation.mjs'
-
-class AlreadyInLobbyError extends Error { }
 
 /**
 * Register leave lobby subject handler.
@@ -46,11 +44,6 @@ export function joinLobbySubject (server) {
     const user = corr.context.sessionUser
     /** @type {LobbyData} */
     const lobby = corr.context.lobby
-
-    // If user is already in a lobby, reject
-    if (lobbyParticipantRepository.getLobbyOf(user.id)) {
-      throw new AlreadyInLobbyError('User is already in a lobby!')
-    }
 
     // Join
     lobbyService.join(user, lobby)

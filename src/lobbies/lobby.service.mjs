@@ -9,11 +9,12 @@ import assert from 'node:assert'
 import logger from '../logger.mjs'
 import { LobbyData } from './lobby.data.mjs'
 import { nanoid } from 'nanoid'
-import { IdInUseError } from '../repository.mjs'
 import { requireParam } from '../assertions.mjs'
 import { DeleteLobbyNotificationMessage, JoinLobbyNotificationMessage, LeaveLobbyNotificationMessage } from './message.templates.mjs'
 
-class LobbyOwnerError extends Error { }
+export class LobbyOwnerError extends Error { }
+
+export class AlreadyInLobbyError extends Error { }
 
 /**
 * @typedef {object} LobbyNameConfig
@@ -64,13 +65,20 @@ export class LobbyService {
     assert(name.length >= this.#nameConfig.minNameLength, 'Lobby name too short!')
     assert(name.length < this.#nameConfig.maxNameLength, 'Lobby name too long!')
 
-    // Check if user is not already in a lobby
-    assert(
-      this.#participantRepository.getLobbiesOf(owner.id)
-        .map(lobbyId => this.#lobbyRepository.find(lobbyId))
-        .every(lobby => lobby.game !== game.id),
-      'User is already in a lobby!'
+    this.#log.info(
+      { user: owner.id, game: game.id },
+      'Attempting to create lobby for user'
     )
+
+    // Check if user is not already in a lobby
+    if (this.#isUserInLobby(owner.id, game.id)) {
+      this.#log.error(
+        { user: owner.id, game: game.id },
+        'Can\'t create lobby for user, they\'re already in a lobby'
+      )
+
+      throw new AlreadyInLobbyError('User is already in a lobby!')
+    }
 
     const lobby = this.#lobbyRepository.add(new LobbyData({
       id: nanoid(),
@@ -78,6 +86,11 @@ export class LobbyService {
       owner: owner.id,
       game: game.id
     }))
+
+    this.#log.info(
+      { user: owner.id, game: game.id, lobby: lobby.id },
+      'Created lobby for user'
+    )
 
     this.join(owner, lobby)
 
@@ -90,20 +103,30 @@ export class LobbyService {
   * @param {LobbyData} lobby Target lobby
   */
   join (user, lobby) {
-    // Add user to lobby
-    // This will throw if user is already in a lobby
-    try {
-      this.#participantRepository.add(new LobbyParticipant({
-        userId: user.id,
-        lobbyId: lobby.id
-      }))
-    } catch (e) {
-      this.#log.error({ err: e }, 'Failed adding user to lobby')
+    this.#log.info(
+      { user: user.id, lobby: lobby.id },
+      'Attempting to add user to lobby'
+    )
 
-      throw e instanceof IdInUseError
-        ? new Error('User is already in a lobby!')
-        : e
+    // Reject if user is already in a lobby in that game
+    if (this.#isUserInLobby(user.id, lobby.game)) {
+      this.#log.error(
+        { user: user.id, lobby: lobby.id },
+        'Can\'t add user to lobby, they\'re already in another'
+      )
+
+      throw new AlreadyInLobbyError('User is already in a lobby!')
     }
+
+    // Add user to lobby
+    this.#participantRepository.add(new LobbyParticipant({
+      userId: user.id,
+      lobbyId: lobby.id
+    }))
+    this.#log.info(
+      { user: user.id, lobby: lobby.id },
+      'Added user to lobby'
+    )
 
     // Notify participants, including joining user
     this.#notificationService.send({
@@ -122,7 +145,6 @@ export class LobbyService {
     if (!this.#participantRepository.isParticipantOf(user.id, lobby.id)) {
       return
     }
-
     // Deny if user is owner of lobby
     if (lobby.owner === user.id) {
       throw new LobbyOwnerError('Can\'t leave own lobby')
@@ -158,5 +180,17 @@ export class LobbyService {
       message: DeleteLobbyNotificationMessage(lobby),
       userIds: participants
     }).forEach(c => c.finish()) // TODO: Update to single-message correspondence
+  }
+
+  /**
+  * Check if the user is already in a lobby for the given game.
+  * @param {string} userId User id
+  * @param {string} gameId Game id
+  * @returns {boolean}
+  */
+  #isUserInLobby (userId, gameId) {
+    return this.#participantRepository.getLobbiesOf(userId)
+      .map(lobbyId => this.#lobbyRepository.find(lobbyId))
+      .some(lobby => lobby.game === gameId)
   }
 }

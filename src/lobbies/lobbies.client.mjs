@@ -54,7 +54,6 @@ export class LobbiesClient extends Client {
   *
   * Saves the lobby id in `context.lobbyId`
   * @param {string} lobbyId Lobby id
-  * @returns {string} Lobby id
   */
   async join (lobbyId) {
     const corr = this.peer.send(new Message({
