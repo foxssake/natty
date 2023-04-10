@@ -4,7 +4,6 @@ import { User } from '../../users/user.mjs'
 import { LobbyData } from '../lobby.data.mjs'
 /* eslint-enable */
 import { sessionRepository, sessionService } from '../../sessions/sessions.mjs'
-import { requireSession, requireSessionUser } from '../../sessions/validation.mjs'
 import { userRepository } from '../../users/users.mjs'
 import { requireAuthorization } from '../../validators/require.header.mjs'
 import { lobbyRepository, lobbyService } from '../lobbies.mjs'
@@ -12,6 +11,8 @@ import { ajv } from '../../ajv.mjs'
 import { requireBody } from '../../validators/require.body.mjs'
 import { requireSchema } from '../../validators/require.schema.mjs'
 import { requireLobby } from '../validation.mjs'
+import { requireSession } from '../../sessions/validators/require.session.mjs'
+import { requireSessionUser } from '../../sessions/validators/require.session.user.mjs'
 
 // TODO: Standard error? Maybe in nlon?
 class UnauthorizedError extends Error { }
@@ -44,7 +45,7 @@ export function deleteLobbySubject (server) {
     )
 
     /** @type {User} */
-    const user = corr.context.sessionUser
+    const user = corr.context.user
 
     /** @type {LobbyData} */
     const lobby = corr.context.lobby

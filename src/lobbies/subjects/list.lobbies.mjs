@@ -2,8 +2,8 @@
 import { Server } from '@elementbound/nlon'
 /* eslint-enable */
 import { gameRepository } from '../../games/games.mjs'
-import { sessionRepository, sessionService } from '../../sessions/sessions.mjs'
-import { requireSession, requireSessionGame } from '../../sessions/validation.mjs'
+import { requireSessionGame } from '../../sessions/validation.mjs'
+import { requireSession } from '../../sessions/validators/require.session.mjs'
 import { requireAuthorization } from '../../validators/require.header.mjs'
 import { lobbyRepository } from '../lobbies.mjs'
 
@@ -17,10 +17,10 @@ function ListLobbiesResponse (lobbies) {
 * @param {Server} server nlon server
 */
 export function listLobbiesSubject (server) {
-  server.handle('lobby/list', async (peer, corr) => {
+  server.handle('lobby/list', async (_peer, corr) => {
     await corr.next(
       requireAuthorization(),
-      requireSession(sessionRepository, sessionService),
+      requireSession(),
       requireSessionGame(gameRepository)
     )
 
