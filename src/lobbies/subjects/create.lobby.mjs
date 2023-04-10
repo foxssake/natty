@@ -4,14 +4,13 @@ import { User } from '../../users/user.mjs'
 import { GameData } from '../../games/game.data.mjs'
 /* eslint-enable */
 import { ajv } from '../../ajv.mjs'
-import { gameRepository } from '../../games/games.mjs'
-import { sessionRepository, sessionService } from '../../sessions/sessions.mjs'
-import { requireSession, requireSessionGame, requireSessionUser } from '../../sessions/validation.mjs'
-import { userRepository } from '../../users/users.mjs'
 import { requireBody } from '../../validators/require.body.mjs'
 import { requireAuthorization } from '../../validators/require.header.mjs'
 import { requireSchema } from '../../validators/require.schema.mjs'
 import { lobbyService } from '../lobbies.mjs'
+import { requireSessionUser } from '../../sessions/validators/require.session.user.mjs'
+import { requireSession } from '../../sessions/validators/require.session.mjs'
+import { requireSessionGame } from '../../sessions/validators/require.session.game.mjs'
 
 function CreateLobbyResponse (lobby) {
   return {
@@ -38,17 +37,17 @@ export function createLobbySubject (server) {
       requireBody(),
       requireSchema('lobby/create'),
       requireAuthorization(),
-      requireSession(sessionRepository, sessionService),
-      requireSessionUser(userRepository),
-      requireSessionGame(gameRepository)
+      requireSession(),
+      requireSessionUser(),
+      requireSessionGame()
     )
 
     /** @type {string} */
     const name = request.name
     /** @type {User} */
-    const user = corr.context.sessionUser
+    const user = corr.context.user
     /** @type {GameData} */
-    const game = corr.context.sessionGame
+    const game = corr.context.game
 
     const lobby = lobbyService.create(name, user, game)
     corr.finish(CreateLobbyResponse(lobby))

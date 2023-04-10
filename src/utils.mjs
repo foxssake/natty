@@ -26,3 +26,20 @@ export function promiseEvent (source, event) {
     source.on(event, resolve)
   })
 }
+
+/**
+* Wrap a function as a singleton factory.
+*
+* In practice, this will create a function that will cache the wrapped
+* function's return value, assuming it always returns the same thing.
+*
+* NOTE: This will evaluate the method while wrapping.
+*
+* @param {function(): T} f Function to wrap
+* @returns {function(): T} Singleton factory function
+* @template T
+*/
+export function asSingletonFactory (f) {
+  const value = f()
+  return () => value
+}

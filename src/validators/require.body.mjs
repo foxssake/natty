@@ -1,4 +1,5 @@
 import { Correspondence } from '@elementbound/nlon'
+import { asSingletonFactory } from '../utils.mjs'
 import { Validator } from './validator.mjs'
 
 export class MissingBodyError extends Error { }
@@ -11,13 +12,10 @@ export class BodyPresenceValidator extends Validator {
   }
 }
 
-const validatorInstance = new BodyPresenceValidator()
-const validatorFunction = validatorInstance.asFunction()
-
 /**
 * Validate that there is a message body present.
 * @returns {ReadHandler}
 */
-export function requireBody () {
-  return validatorFunction
-}
+export const requireBody = asSingletonFactory(() =>
+  new BodyPresenceValidator().asFunction()
+)

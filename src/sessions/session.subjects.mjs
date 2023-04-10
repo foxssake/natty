@@ -8,8 +8,9 @@ import { requireGame } from '../games/validation.mjs'
 import { requireBody } from '../validators/require.body.mjs'
 import { requireAuthorization } from '../validators/require.header.mjs'
 import { requireSchema } from '../validators/require.schema.mjs'
-import { sessionRepository, sessionService } from './sessions.mjs'
-import { requireSession } from './validation.mjs'
+import { requireSession } from './validators/require.session.mjs'
+import { sessionService } from './session.service.mjs'
+import { sessionRepository } from './session.repository.mjs'
 
 function registerSchemas (ajv) {
   ajv.addSchema({

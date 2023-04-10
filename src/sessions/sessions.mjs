@@ -1,19 +1,12 @@
-import { SessionRepository } from './session.repository.mjs'
-import { SessionService } from './session.service.mjs'
-import { userRepository } from '../users/users.mjs'
+import { sessionRepository } from './session.repository.mjs'
 import { sessionSubjects } from './session.subjects.mjs'
 import { startCleanupJob } from './session.cleanup.mjs'
 import { Natty } from '../natty.mjs'
 import { config } from '../config.mjs'
 import logger from '../logger.mjs'
+import { sessionService } from './session.service.mjs'
 
 const log = logger.child({ name: 'Sessions' })
-
-export const sessionRepository = new SessionRepository()
-export const sessionService = new SessionService({
-  userRepository,
-  sessionRepository
-})
 
 Natty.hook(natty => {
   log.info('Registering session subjects')

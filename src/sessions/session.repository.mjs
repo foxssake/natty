@@ -18,3 +18,5 @@ export class SessionRepository extends Repository {
       .filter(s => userIds.includes(s.userId))
   }
 }
+
+export const sessionRepository = new SessionRepository()

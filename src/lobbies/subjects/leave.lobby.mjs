@@ -2,11 +2,10 @@
 import { Server } from '@elementbound/nlon'
 import { User } from '../../users/user.mjs'
 /* eslint-enable */
-import { sessionRepository, sessionService } from '../../sessions/sessions.mjs'
-import { requireSession, requireSessionUser } from '../../sessions/validation.mjs'
-import { userRepository } from '../../users/users.mjs'
 import { requireAuthorization } from '../../validators/require.header.mjs'
 import { lobbyParticipantRepository, lobbyRepository, lobbyService } from '../lobbies.mjs'
+import { requireSession } from '../../sessions/validators/require.session.mjs'
+import { requireSessionUser } from '../../sessions/validators/require.session.user.mjs'
 
 class NotInLobbyError extends Error { }
 
@@ -15,15 +14,15 @@ class NotInLobbyError extends Error { }
 * @param {Server} server nlon server
 */
 export function leaveLobbySubject (server) {
-  server.handle('lobby/leave', async (peer, corr) => {
+  server.handle('lobby/leave', async (_peer, corr) => {
     await corr.next(
       requireAuthorization(),
-      requireSession(sessionRepository, sessionService),
-      requireSessionUser(userRepository)
+      requireSession(),
+      requireSessionUser()
     )
 
     /** @type {User} */
-    const user = corr.context.sessionUser
+    const user = corr.context.user
 
     const lobbyId = lobbyParticipantRepository.getLobbyOf(user.id)
     if (!lobbyId) {
