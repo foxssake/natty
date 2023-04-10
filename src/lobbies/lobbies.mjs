@@ -17,12 +17,7 @@ export const lobbyParticipantRepository = new LobbyParticipantRepository()
 export const lobbyService = new LobbyService({
   lobbyRepository,
   notificationService,
-  participantRepository: lobbyParticipantRepository,
-  // TODO: Remove
-  nameConfig: {
-    minNameLength: 4,
-    maxNameLength: 128
-  }
+  participantRepository: lobbyParticipantRepository
 })
 
 Natty.hook(natty => {

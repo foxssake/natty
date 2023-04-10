@@ -1,6 +1,6 @@
 import { createSocketPeer } from '@elementbound/nlon-socket'
-import { NattyConfig } from '../../src/config.mjs'
 import logger from '../../src/logger.mjs'
+import { config } from '../../src/config.mjs'
 import { NattyClient } from '../../src/natty.client.mjs'
 import { Natty } from '../../src/natty.mjs'
 import { promiseEvent } from '../../src/utils.mjs'
@@ -12,14 +12,12 @@ export class End2EndContext {
   /** @type {Natty} */
   natty
 
-  config = new NattyConfig()
-
   log = logger.child({ name: 'test' })
 
   async startup () {
     this.log.info('Starting app')
 
-    this.natty = new Natty(this.config)
+    this.natty = new Natty()
     await this.natty.start()
 
     this.log.info('Waiting for Natty ot start listening')
@@ -36,7 +34,7 @@ export class End2EndContext {
     this.log.info('Creating client')
     const peer = createSocketPeer({
       host: 'localhost',
-      port: this.config.socket.port
+      port: config.socket.port
     })
 
     const client = new NattyClient(peer)

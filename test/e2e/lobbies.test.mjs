@@ -5,6 +5,7 @@ import { NattyClient } from '../../src/natty.client.mjs'
 import { describe, it, after, before } from 'node:test'
 import assert from 'node:assert'
 import { End2EndContext } from './context.mjs'
+import { config } from '../../src/config.mjs'
 
 describe('Lobbies', { concurrency: false }, async () => {
   const context = new End2EndContext()
@@ -19,7 +20,7 @@ describe('Lobbies', { concurrency: false }, async () => {
   let lobbyId
 
   before(async () => {
-    context.config.games = 'test001 Test'
+    config.games = 'test001 Test'
     await context.startup()
 
     context.log.info('Creating session')

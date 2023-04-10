@@ -4,6 +4,7 @@ import { userRepository } from '../users/users.mjs'
 import { sessionSubjects } from './session.subjects.mjs'
 import { startCleanupJob } from './session.cleanup.mjs'
 import { Natty } from '../natty.mjs'
+import { config } from '../config.mjs'
 import logger from '../logger.mjs'
 
 const log = logger.child({ name: 'Sessions' })
@@ -20,8 +21,8 @@ Natty.hook(natty => {
 
   log.info('Starting session cleanup job')
   const cleanupJob = startCleanupJob({
-    timeout: natty.config.session.timeout * 1000,
-    interval: natty.config.session.cleanupInterval * 1000,
+    timeout: config.session.timeout * 1000,
+    interval: config.session.cleanupInterval * 1000,
     sessionRepository,
     sessionService
   })

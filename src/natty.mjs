@@ -1,12 +1,11 @@
 /* eslint-disable */
 import * as nlon from '@elementbound/nlon'
-import { NattyConfig } from './config.mjs'
 /* eslint-enable */
 import * as net from 'node:net'
-import { fail } from 'node:assert'
 import { EventEmitter } from 'node:events'
 import { wrapSocketServer } from '@elementbound/nlon-socket'
 import logger from './logger.mjs'
+import { config } from './config.mjs'
 
 const defaultModules = [
   'sessions/sessions.mjs',
@@ -17,9 +16,6 @@ const defaultModules = [
 const hooks = []
 
 export class Natty extends EventEmitter {
-  /** @type {NattyConfig} */
-  #config
-
   /** @type {net.Server} */
   #socket
 
@@ -36,24 +32,10 @@ export class Natty extends EventEmitter {
     hooks.push(h)
   }
 
-  /**
-  * Construct instance.
-  * @param {NattyConfig} config Config
-  */
-  constructor (config) {
-    super()
-
-    config ?? fail('Config required!')
-    this.#config = Object.freeze({ ...config })
-  }
-
   async start (modules) {
     modules ??= defaultModules
 
-    this.#log.info(
-      { config: this.#config, modules },
-      'Starting Natty with configuration'
-    )
+    this.#log.info('Starting Natty')
 
     const socket = net.createServer()
 
@@ -76,13 +58,13 @@ export class Natty extends EventEmitter {
     hooks.forEach(h => h(this))
     this.#log.info('Hooks done')
 
-    socket.listen(this.#config.socket.port, this.#config.socket.host, () => {
+    socket.listen(config.socket.port, config.socket.host, () => {
       this.#log.info(
         'Listening on %s:%s',
-        this.#config.socket.host, this.#config.socket.port
+        config.socket.host, config.socket.port
       )
 
-      this.emit('listening', this.#config.socket.port, this.#config.socket.host)
+      this.emit('listening', config.socket.port, config.socket.host)
     })
   }
 
@@ -96,9 +78,5 @@ export class Natty extends EventEmitter {
 
   get nlons () {
     return this.#nlons
-  }
-
-  get config () {
-    return this.#config
   }
 }
