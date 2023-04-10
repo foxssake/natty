@@ -1,3 +1,4 @@
+import { config } from '../config.mjs'
 import logger from '../logger.mjs'
 import { Natty } from '../natty.mjs'
 import { GameData } from './game.data.mjs'
@@ -30,7 +31,7 @@ Natty.hook(natty => {
   const log = logger.child({ name: 'Games' })
 
   log.info('Parsing games from config')
-  parseGamesConfig(natty.config.games)
+  parseGamesConfig(config.games)
     .forEach(game => {
       log.info({ game }, 'Adding game')
       gameRepository.add(game)

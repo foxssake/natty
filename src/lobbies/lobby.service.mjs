@@ -7,6 +7,7 @@ import { NotificationService } from '../notifications/notification.service.mjs'
 /* eslint-enable */
 import assert from 'node:assert'
 import logger from '../logger.mjs'
+import { config } from '../config.mjs'
 import { LobbyData } from './lobby.data.mjs'
 import { nanoid } from 'nanoid'
 import { requireParam } from '../assertions.mjs'
@@ -15,12 +16,6 @@ import { DeleteLobbyNotificationMessage, JoinLobbyNotificationMessage, LeaveLobb
 export class LobbyOwnerError extends Error { }
 
 export class AlreadyInLobbyError extends Error { }
-
-/**
-* @typedef {object} LobbyNameConfig
-* @property {number} minNameLength
-* @property {number} maxNameLength
-*/
 
 /**
 */
@@ -32,8 +27,6 @@ export class LobbyService {
   #participantRepository
   /** @type {NotificationService} */
   #notificationService
-  /** @type {LobbyNameConfig} */
-  #nameConfig
 
   /**
   * Construct service.
@@ -43,13 +36,11 @@ export class LobbyService {
   *   Lobby participant repository
   * @param {NotificationService} options.notificationService
   *   Notification service
-  * @param {LobbyNameConfig} options.nameConfig Lobby name rule config
   */
   constructor (options) {
     this.#lobbyRepository = requireParam(options.lobbyRepository)
     this.#participantRepository = requireParam(options.participantRepository)
     this.#notificationService = requireParam(options.notificationService)
-    this.#nameConfig = requireParam(options.nameConfig)
     this.#log = logger.child({ name: 'LobbyService' })
   }
 
@@ -61,9 +52,8 @@ export class LobbyService {
   * @returns {LobbyData} New lobby
   */
   create (name, owner, game) {
-    // TODO: Move to route
-    assert(name.length >= this.#nameConfig.minNameLength, 'Lobby name too short!')
-    assert(name.length < this.#nameConfig.maxNameLength, 'Lobby name too long!')
+    assert(name.length >= config.lobby.minNameLength, 'Lobby name too short!')
+    assert(name.length < config.lobby.maxNameLength, 'Lobby name too long!')
 
     this.#log.info(
       { user: owner.id, game: game.id },

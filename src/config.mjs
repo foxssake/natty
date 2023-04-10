@@ -1,6 +1,6 @@
 import * as dotenv from 'dotenv'
 import { integer, number } from './config.parsers.mjs'
-import { getLogLevel } from './logger.mjs'
+import logger, { getLogLevel } from './logger.mjs'
 
 dotenv.config()
 
@@ -29,3 +29,6 @@ export class NattyConfig {
 
   loglevel = getLogLevel()
 }
+
+export const config = new NattyConfig()
+logger.info({ config }, 'Loaded application config')
