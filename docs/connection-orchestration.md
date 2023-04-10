@@ -76,7 +76,7 @@ Firstly, the hosting method is determined:
 1. Wait for participants to report
     1. Each participant reports whether they managed to connect
     1. For each participant failing to connect
-        1. If the config limit isn't reached, create an UDP relay
+        1. If the config limit isn't reached, create a UDP relay
             1. Participant should report again
         1. Else fail the lobby
     1. If all participants succeeded, revel in success
