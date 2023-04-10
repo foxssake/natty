@@ -5,6 +5,7 @@ import { requireParam } from '../../assertions.mjs'
 import { InvalidSessionError } from './require.session.mjs'
 import { ExtractMapperValidator } from '../../validators/extract.mapper.validator.mjs'
 import { userRepository } from '../../users/users.mjs'
+import { asSingletonFactory } from '../../utils.mjs'
 
 export class SessionUserIdValidator extends ExtractMapperValidator {
   /**
@@ -35,8 +36,8 @@ export class SessionUserIdValidator extends ExtractMapperValidator {
 *
 * @returns {ReadHandler}
 */
-export function requireSessionUser () {
-  return new SessionUserIdValidator({
+export const requireSessionUser = asSingletonFactory(() =>
+  new SessionUserIdValidator({
     userRepository
   }).asFunction()
-}
+)
