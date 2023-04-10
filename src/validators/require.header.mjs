@@ -25,6 +25,7 @@ export class HeaderValidator extends Validator {
   }
 }
 
+// TODO: asSingletonFactory
 const authValidator = new HeaderValidator('authorization')
 const authFunction = authValidator.asFunction()
 

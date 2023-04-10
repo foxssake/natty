@@ -11,6 +11,7 @@ export class BodyPresenceValidator extends Validator {
   }
 }
 
+// TODO: asSingletonFactory
 const validatorInstance = new BodyPresenceValidator()
 const validatorFunction = validatorInstance.asFunction()
 

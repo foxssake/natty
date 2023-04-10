@@ -40,7 +40,7 @@ export class SessionData {
 
   /**
   * Construct instance.
-  * @param {GameData} [options] Options
+  * @param {SessionData} [options] Options
   */
   constructor (options) {
     options && Object.assign(this, options)
