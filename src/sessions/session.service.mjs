@@ -1,7 +1,7 @@
 /* eslint-disable */
 import { Peer } from '@elementbound/nlon'
 import { UserRepository } from '../users/user.repository.mjs'
-import { SessionRepository } from './session.repository.mjs'
+import { sessionRepository, SessionRepository } from './session.repository.mjs'
 import { GameData } from '../games/game.data.mjs'
 /* eslint-enable */
 import { nanoid } from 'nanoid'
@@ -10,6 +10,7 @@ import logger from '../logger.mjs'
 import { timestamp } from '../utils.mjs'
 import { SessionData } from './session.data.mjs'
 import { User } from '../users/user.mjs'
+import { userRepository } from '../users/users.mjs'
 
 /**
 * Service for managing sessions.
@@ -96,3 +97,8 @@ export class SessionService {
     this.#log.info({ sessionId: id, userId: session.userId }, 'Destroyed session')
   }
 }
+
+export const sessionService = new SessionService({
+  userRepository,
+  sessionRepository
+})

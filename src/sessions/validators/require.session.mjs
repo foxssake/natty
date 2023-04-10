@@ -1,10 +1,9 @@
 /* eslint-disable */
-import { SessionService } from '../session.service.mjs'
+import { sessionService, SessionService } from '../session.service.mjs'
 /* eslint-enable */
 import { requireParam } from '../../assertions.mjs'
 import { asSingletonFactory } from '../../utils.mjs'
 import { Validator } from '../../validators/validator.mjs'
-import { sessionService } from '../sessions.mjs'
 
 export class InvalidSessionError extends Error { }
 

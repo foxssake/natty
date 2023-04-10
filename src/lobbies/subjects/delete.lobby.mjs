@@ -3,8 +3,6 @@ import { Server } from '@elementbound/nlon'
 import { User } from '../../users/user.mjs'
 import { LobbyData } from '../lobby.data.mjs'
 /* eslint-enable */
-import { sessionRepository, sessionService } from '../../sessions/sessions.mjs'
-import { userRepository } from '../../users/users.mjs'
 import { requireAuthorization } from '../../validators/require.header.mjs'
 import { lobbyRepository, lobbyService } from '../lobbies.mjs'
 import { ajv } from '../../ajv.mjs'
@@ -39,8 +37,8 @@ export function deleteLobbySubject (server) {
       requireBody(),
       requireSchema('lobby/delete'),
       requireAuthorization(),
-      requireSession(sessionRepository, sessionService),
-      requireSessionUser(userRepository),
+      requireSession(),
+      requireSessionUser(),
       requireLobby(lobbyRepository, body => body.lobby.id)
     )
 
