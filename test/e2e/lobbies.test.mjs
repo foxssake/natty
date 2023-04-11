@@ -75,6 +75,36 @@ describe('Lobbies', { concurrency: false }, async () => {
     })
   })
 
+  describe('leave', () => {
+    before(async () => {
+      // Create own client that has no lobby
+      client = context.connect()
+      await client.session.login('bar', 'test001')
+
+      // Join to previously created lobby so we can leave
+      await client.lobbies.join(lobbyId)
+    })
+
+    it('should reject without auth', () => {
+      assert.rejects(() =>
+        unauthClient.lobbies.leave()
+      )
+    })
+
+    it('should leave lobby', () => {
+      assert.doesNotReject(() =>
+        client.lobbies.leave()
+      )
+    })
+
+    it('should reject if not in any lobby', () => {
+      // Already left the lobby, should reject
+      assert.rejects(() =>
+        client.lobbies.leave()
+      )
+    })
+  })
+
   it('should list lobbies', async () => {
     // Given
     const lobbies = []

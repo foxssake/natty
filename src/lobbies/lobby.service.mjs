@@ -181,6 +181,6 @@ export class LobbyService {
   #isUserInLobby (userId, gameId) {
     return this.#participantRepository.getLobbiesOf(userId)
       .map(lobbyId => this.#lobbyRepository.find(lobbyId))
-      .some(lobby => lobby.game === gameId)
+      .some(lobby => lobby?.game === gameId)
   }
 }
