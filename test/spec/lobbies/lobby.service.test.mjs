@@ -1,6 +1,6 @@
 import { beforeEach, describe, it, mock } from 'node:test'
 import assert from 'node:assert'
-import { LobbyService } from '../../../src/lobbies/lobby.service.mjs'
+import { LobbyOwnerError, LobbyService } from '../../../src/lobbies/lobby.service.mjs'
 import { mockClass } from '../../mocking.mjs'
 import { LobbyRepository } from '../../../src/lobbies/lobby.repository.mjs'
 import { LobbyParticipantRepository } from '../../../src/lobbies/lobby.participant.repository.mjs'
@@ -9,6 +9,7 @@ import { User } from '../../../src/users/user.mjs'
 import { Repository } from '../../../src/repository.mjs'
 import { GameData } from '../../../src/games/game.data.mjs'
 import { LobbyData } from '../../../src/lobbies/lobby.data.mjs'
+import { LeaveLobbyNotificationMessage } from '../../../src/lobbies/message.templates.mjs'
 
 describe('LobbyService', () => {
   /** @type {LobbyRepository} */
@@ -199,6 +200,97 @@ describe('LobbyService', () => {
       assert.throws(
         () => lobbyService.join(user, lobby),
         e => e.message === 'User is already in a lobby!'
+      )
+    })
+  })
+
+  describe('leave', () => {
+    beforeEach(setup)
+
+    it('should remove user', () => {
+      // Given
+      const user = new User({
+        id: 'usr-leave',
+        name: 'Leaving user'
+      })
+
+      const lobby = new LobbyData({
+        id: 'l001',
+        game: 'g001',
+        name: 'Target lobby',
+        owner: 'usr-owner'
+      })
+
+      participantRepository.isParticipantOf = mock.fn(() => true)
+      participantRepository.getParticipantsOf = () => ['usr01', 'usr02']
+
+      // When
+      lobbyService.leave(user, lobby)
+
+      // Then
+      assert.equal(
+        participantRepository.removeParticipantFrom.mock.callCount(),
+        1
+      )
+      assert.deepEqual(
+        participantRepository.removeParticipantFrom.mock.calls[0].arguments,
+        [user.id, lobby.id]
+      )
+
+      assert.equal(notificationService.send.mock.callCount(), 1)
+      assert.deepEqual(
+        notificationService.send.mock.calls[0].arguments[0].userIds,
+        [user.id, 'usr01', 'usr02']
+      )
+    })
+
+    it('should do nothing if not in lobby', () => {
+      // Given
+      const user = new User({
+        id: 'usr-leave',
+        name: 'Leaving user'
+      })
+
+      const lobby = new LobbyData({
+        id: 'l001',
+        game: 'g001',
+        name: 'Target lobby',
+        owner: 'usr-owner'
+      })
+
+      participantRepository.isParticipantOf = mock.fn(() => false)
+
+      // When
+      lobbyService.leave(user, lobby)
+
+      // Then
+      assert.equal(
+        participantRepository.removeParticipantFrom.mock.callCount(),
+        0
+      )
+      assert.equal(notificationService.send.mock.callCount(), 0)
+    })
+
+    it('should reject if owner is leaving', () => {
+      // Given
+      const user = new User({
+        id: 'usr-leave',
+        name: 'Leaving user'
+      })
+
+      const lobby = new LobbyData({
+        id: 'l001',
+        game: 'g001',
+        name: 'Target lobby',
+        owner: user.id
+      })
+
+      participantRepository.isParticipantOf = mock.fn(() => true)
+
+      // When
+      assert.throws(
+        () => lobbyService.leave(user, lobby),
+        LobbyOwnerError
       )
     })
   })
