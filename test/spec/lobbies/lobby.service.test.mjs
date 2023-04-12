@@ -9,7 +9,6 @@ import { User } from '../../../src/users/user.mjs'
 import { Repository } from '../../../src/repository.mjs'
 import { GameData } from '../../../src/games/game.data.mjs'
 import { LobbyData } from '../../../src/lobbies/lobby.data.mjs'
-import { LeaveLobbyNotificationMessage } from '../../../src/lobbies/message.templates.mjs'
 
 describe('LobbyService', () => {
   /** @type {LobbyRepository} */
@@ -291,6 +290,58 @@ describe('LobbyService', () => {
       assert.throws(
         () => lobbyService.leave(user, lobby),
         LobbyOwnerError
+      )
+    })
+  })
+
+  describe('delete', () => {
+    it('should delete lobby', () => {
+      // Given
+      const lobby = new LobbyData({
+        id: 'l001',
+        game: 'g001',
+        name: 'Target lobby',
+        owner: 'usr002'
+      })
+
+      participantRepository.getParticipantsOf = mock.fn(
+        () => ['usr002', 'usr003']
+      )
+
+      notificationService.send = mock.fn(() => [])
+
+      // When
+      lobbyService.delete(lobby)
+
+      // Then
+      assert.equal(
+        participantRepository.getParticipantsOf.mock.callCount(),
+        1
+      )
+      assert.deepEqual(
+        participantRepository.getParticipantsOf.mock.calls[0].arguments,
+        [lobby.id]
+      )
+
+      assert.equal(
+        participantRepository.deleteLobby.mock.callCount(),
+        1
+      )
+      assert.deepEqual(
+        participantRepository.deleteLobby.mock.calls[0].arguments,
+        [lobby.id]
+      )
+
+      assert.equal(lobbyRepository.remove.mock.callCount(), 1)
+      assert.deepEqual(
+        lobbyRepository.remove.mock.calls[0].arguments,
+        [lobby.id]
+      )
+
+      assert.equal(notificationService.send.mock.callCount(), 1)
+      assert.deepEqual(
+        notificationService.send.mock.calls[0].arguments[0].userIds,
+        ['usr002', 'usr003']
       )
     })
   })

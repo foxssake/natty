@@ -105,6 +105,34 @@ describe('Lobbies', { concurrency: false }, async () => {
     })
   })
 
+  describe('delete', () => {
+    before(async () => {
+      // Create own client that has no lobby
+      client = context.connect()
+      await client.session.login('quix', 'test001')
+    })
+
+    it('should reject without auth', () => {
+      assert.rejects(
+        () => unauthClient.lobbies.delete(lobbyId)
+      )
+    })
+
+    it('should reject if not own lobby', () => {
+      assert.rejects(
+        () => client.lobbies.delete(lobbyId)
+      )
+    })
+
+    it('should delete lobby', async () => {
+      const ownLobbyId = await client.lobbies.create('test002')
+
+      assert.doesNotReject(
+        () => client.lobbies.delete(ownLobbyId)
+      )
+    })
+  })
+
   it('should list lobbies', async () => {
     // Given
     const lobbies = []
