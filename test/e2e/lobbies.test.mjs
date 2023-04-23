@@ -133,17 +133,25 @@ describe('Lobbies', { concurrency: false }, async () => {
     })
   })
 
-  it('should list lobbies', async () => {
-    // Given
-    const lobbies = []
+  describe('list', () => {
+    it('should reject without auth', async () => {
+      assert.rejects(
+        () => unauthClient.lobbies.list().next()
+      )
+    })
 
-    // When
-    for await (const lobby of client.lobbies.list()) {
-      lobbies.push(lobby)
-    }
+    it('should list lobbies', async () => {
+      // Given
+      const lobbies = []
 
-    // Then
-    assert(lobbies.length)
+      // When
+      for await (const lobby of client.lobbies.list()) {
+        lobbies.push(lobby)
+      }
+
+      // Then
+      assert(lobbies.length)
+    })
   })
 
   after(() => context.shutdown())
