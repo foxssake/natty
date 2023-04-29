@@ -1,3 +1,17 @@
+import assert from 'node:assert'
+import { enumerated } from '../config.parsers.mjs'
+
+/**
+* Possible lobby states.
+* @readonly
+* @enum {string}
+*/
+export const LobbyState = Object.freeze({
+  Gathering: 'gathering',
+  Starting: 'starting',
+  Active: 'active'
+})
+
 /**
 * Class representing a lobby.
 */
@@ -27,10 +41,20 @@ export class LobbyData {
   game
 
   /**
+  * Lobby state
+  * @type {string}
+  */
+  state = LobbyState.Gathering
+
+  /**
   * Construct instance.
   * @param {LobbyData} [options] Options
   */
   constructor (options) {
     options && Object.assign(this, options)
+    assert(
+      enumerated(this.state, Object.values(LobbyState)),
+      'Trying to create lobby with invalid state: ' + this.state
+    )
   }
 }
