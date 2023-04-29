@@ -53,6 +53,14 @@ export class LobbyData {
   isPublic = true
 
   /**
+  * Is lobby locked?
+  * @type {boolean}
+  */
+  get isLocked () {
+    return this.state === LobbyState.Gathering
+  }
+
+  /**
   * Construct instance.
   * @param {LobbyData} [options] Options
   */
