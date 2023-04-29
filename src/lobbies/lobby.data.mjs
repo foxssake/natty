@@ -47,6 +47,12 @@ export class LobbyData {
   state = LobbyState.Gathering
 
   /**
+  * Is the lobby public?
+  * @type {boolean}
+  */
+  isPublic = true
+
+  /**
   * Construct instance.
   * @param {LobbyData} [options] Options
   */

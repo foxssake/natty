@@ -49,9 +49,10 @@ export class LobbyService {
   * @param {string} name Lobby name
   * @param {User} owner Owning user
   * @param {GameData} game Hosting game
+  * @param {boolean} isPublic Is public lobby?
   * @returns {LobbyData} New lobby
   */
-  create (name, owner, game) {
+  create (name, owner, game, isPublic) {
     assert(name.length >= config.lobby.minNameLength, 'Lobby name too short!')
     assert(name.length < config.lobby.maxNameLength, 'Lobby name too long!')
 
@@ -74,7 +75,8 @@ export class LobbyService {
       id: nanoid(),
       name,
       owner: owner.id,
-      game: game.id
+      game: game.id,
+      isPublic
     }))
 
     this.#log.info(

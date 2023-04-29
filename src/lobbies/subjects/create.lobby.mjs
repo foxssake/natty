@@ -28,8 +28,10 @@ export function createLobbySubject (server) {
   ajv.addSchema({
     type: 'object',
     properties: {
-      name: { type: 'string' }
-    }
+      name: { type: 'string' },
+      public: { type: 'boolean' }
+    },
+    required: [ 'name' ]
   }, 'lobby/create')
 
   server.handle('lobby/create', async (_peer, corr) => {
@@ -48,8 +50,10 @@ export function createLobbySubject (server) {
     const user = corr.context.user
     /** @type {GameData} */
     const game = corr.context.game
+    /** @type {boolean} */
+    const isPublic = request.public ?? true
 
-    const lobby = lobbyService.create(name, user, game)
+    const lobby = lobbyService.create(name, user, game, isPublic)
     corr.finish(CreateLobbyResponse(lobby))
   })
 }
