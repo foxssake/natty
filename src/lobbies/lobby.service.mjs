@@ -17,6 +17,8 @@ export class LobbyOwnerError extends Error { }
 
 export class AlreadyInLobbyError extends Error { }
 
+export class LobbyLockedError extends Error { }
+
 /**
 */
 export class LobbyService {
@@ -108,6 +110,18 @@ export class LobbyService {
       )
 
       throw new AlreadyInLobbyError('User is already in a lobby!')
+    }
+
+    // Reject if lobby is locked
+    // TODO: UT
+    // TODO: E2E
+    if (lobby.isLocked) {
+      this.#log.error(
+        { user: user.id, lobby: lobby.id },
+        'Can\'t add user to locked lobby!'
+      )
+
+      throw new LobbyLockedError('Lobby is locked!')
     }
 
     // Add user to lobby
