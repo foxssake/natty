@@ -8,7 +8,7 @@ import { NotificationService } from '../notifications/notification.service.mjs'
 import assert from 'node:assert'
 import logger from '../logger.mjs'
 import { config } from '../config.mjs'
-import { LobbyData } from './lobby.data.mjs'
+import { LobbyData, LobbyState } from './lobby.data.mjs'
 import { nanoid } from 'nanoid'
 import { requireParam } from '../assertions.mjs'
 import { DeleteLobbyNotificationMessage, JoinLobbyNotificationMessage, LeaveLobbyNotificationMessage } from './message.templates.mjs'
@@ -113,7 +113,6 @@ export class LobbyService {
     }
 
     // Reject if lobby is locked
-    // TODO: UT
     // TODO: E2E
     if (lobby.isLocked) {
       this.#log.error(
@@ -191,14 +190,14 @@ export class LobbyService {
   /**
   * List lobbies for game.
   *
-  * This will only list lobbies that are publicly visible.
+  * This will only list lobbies that are publicly visible and not active.
   * @param {GameData} game Game
   * @returns {LobbyData[]} Lobbies
   */
   list (game) {
-    // TODO: UTs
     return this.#lobbyRepository.listByGame(game.id)
       .filter(lobby => lobby.isPublic)
+      .filter(lobby => lobby.state !== LobbyState.Active)
   }
 
   /**
