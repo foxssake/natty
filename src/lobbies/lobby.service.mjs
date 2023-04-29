@@ -175,6 +175,19 @@ export class LobbyService {
   }
 
   /**
+  * List lobbies for game.
+  *
+  * This will only list lobbies that are publicly visible.
+  * @param {GameData} game Game
+  * @returns {LobbyData[]} Lobbies
+  */
+  list (game) {
+    // TODO: UTs
+    return this.#lobbyRepository.listByGame(game.id)
+      .filter(lobby => lobby.isPublic)
+  }
+
+  /**
   * Check if the user is already in a lobby for the given game.
   * @param {string} userId User id
   * @param {string} gameId Game id
