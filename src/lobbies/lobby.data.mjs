@@ -57,7 +57,7 @@ export class LobbyData {
   * @type {boolean}
   */
   get isLocked () {
-    return this.state === LobbyState.Gathering
+    return this.state !== LobbyState.Gathering
   }
 
   /**
