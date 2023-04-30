@@ -31,7 +31,6 @@ export function listLobbiesSubject (server) {
     const game = corr.context.game
     const chunkSize = 64
 
-    // TODO: E2E for private lobby
     chunks(lobbyService.list(game), chunkSize)
       .forEach(chunk => {
         corr.write(ListLobbiesResponse(chunk))

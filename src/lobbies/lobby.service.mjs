@@ -113,7 +113,6 @@ export class LobbyService {
     }
 
     // Reject if lobby is locked
-    // TODO: E2E
     if (lobby.isLocked) {
       this.#log.error(
         { user: user.id, lobby: lobby.id },
