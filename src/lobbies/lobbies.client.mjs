@@ -7,16 +7,18 @@ export class LobbiesClient extends Client {
   *
   * Saves the lobby id in `context.lobbyId`
   * @param {string} name Lobby name
+  * @param {boolean} [isPublic=true] Is public?
   * @returns {Promise<string>} Lobby id
   */
-  async create (name) {
+  async create (name, isPublic) {
     const corr = this.peer.send(new Message({
       header: new MessageHeader({
         subject: 'lobby/create',
         authorization: this.context.authorization
       }),
       body: {
-        name
+        name,
+        public: isPublic ?? true
       }
     }))
 

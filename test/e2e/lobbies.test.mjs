@@ -152,6 +152,20 @@ describe('Lobbies', { concurrency: false }, async () => {
       // Then
       assert(lobbies.length)
     })
+
+    it('should not list private lobbies', async () => {
+      // Given
+      const privateLobby = await client.lobbies.create('Private Lobby', false)
+      const listedLobbies = []
+
+      // When
+      for await (const lobby of client.lobbies.list()) {
+        listedLobbies.push(lobby)
+      }
+
+      // Then
+      assert(!listedLobbies.includes(privateLobby), 'Private lobby is in the list!')
+    })
   })
 
   after(() => context.shutdown())

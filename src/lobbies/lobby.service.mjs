@@ -8,7 +8,7 @@ import { NotificationService } from '../notifications/notification.service.mjs'
 import assert from 'node:assert'
 import logger from '../logger.mjs'
 import { config } from '../config.mjs'
-import { LobbyData } from './lobby.data.mjs'
+import { LobbyData, LobbyState } from './lobby.data.mjs'
 import { nanoid } from 'nanoid'
 import { requireParam } from '../assertions.mjs'
 import { DeleteLobbyNotificationMessage, JoinLobbyNotificationMessage, LeaveLobbyNotificationMessage } from './message.templates.mjs'
@@ -16,6 +16,8 @@ import { DeleteLobbyNotificationMessage, JoinLobbyNotificationMessage, LeaveLobb
 export class LobbyOwnerError extends Error { }
 
 export class AlreadyInLobbyError extends Error { }
+
+export class LobbyLockedError extends Error { }
 
 /**
 */
@@ -49,9 +51,10 @@ export class LobbyService {
   * @param {string} name Lobby name
   * @param {User} owner Owning user
   * @param {GameData} game Hosting game
+  * @param {boolean} isPublic Is public lobby?
   * @returns {LobbyData} New lobby
   */
-  create (name, owner, game) {
+  create (name, owner, game, isPublic) {
     assert(name.length >= config.lobby.minNameLength, 'Lobby name too short!')
     assert(name.length < config.lobby.maxNameLength, 'Lobby name too long!')
 
@@ -74,7 +77,8 @@ export class LobbyService {
       id: nanoid(),
       name,
       owner: owner.id,
-      game: game.id
+      game: game.id,
+      isPublic
     }))
 
     this.#log.info(
@@ -106,6 +110,16 @@ export class LobbyService {
       )
 
       throw new AlreadyInLobbyError('User is already in a lobby!')
+    }
+
+    // Reject if lobby is locked
+    if (lobby.isLocked) {
+      this.#log.error(
+        { user: user.id, lobby: lobby.id },
+        'Can\'t add user to locked lobby!'
+      )
+
+      throw new LobbyLockedError('Lobby is locked!')
     }
 
     // Add user to lobby
@@ -170,6 +184,19 @@ export class LobbyService {
       message: DeleteLobbyNotificationMessage(lobby),
       userIds: participants
     }).forEach(c => c.finish()) // TODO: Update to single-message correspondence
+  }
+
+  /**
+  * List lobbies for game.
+  *
+  * This will only list lobbies that are publicly visible and not active.
+  * @param {GameData} game Game
+  * @returns {LobbyData[]} Lobbies
+  */
+  list (game) {
+    return this.#lobbyRepository.listByGame(game.id)
+      .filter(lobby => lobby.isPublic)
+      .filter(lobby => lobby.state !== LobbyState.Active)
   }
 
   /**

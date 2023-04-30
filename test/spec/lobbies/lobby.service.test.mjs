@@ -8,7 +8,7 @@ import { NotificationService } from '../../../src/notifications/notification.ser
 import { User } from '../../../src/users/user.mjs'
 import { Repository } from '../../../src/repository.mjs'
 import { GameData } from '../../../src/games/game.data.mjs'
-import { LobbyData } from '../../../src/lobbies/lobby.data.mjs'
+import { LobbyData, LobbyState } from '../../../src/lobbies/lobby.data.mjs'
 
 describe('LobbyService', () => {
   /** @type {LobbyRepository} */
@@ -166,6 +166,30 @@ describe('LobbyService', () => {
       )
     })
 
+    it('should reject if lobby is locked', () => {
+      // Given
+      const user = new User({
+        id: 'usr-join',
+        name: 'Joining user'
+      })
+
+      const lobby = new LobbyData({
+        id: 'l001',
+        game: 'g001',
+        name: 'Target lobby',
+        owner: 'usr-owner',
+        state: LobbyState.Active
+      })
+
+      participantRepository.getLobbiesOf = mock.fn(() => [])
+
+      // When + then
+      assert.throws(
+        () => lobbyService.join(user, lobby),
+        e => e.message === 'Lobby is locked!'
+      )
+    })
+
     it('should reject if already in lobby', () => {
       // Given
       const owner = new User({
@@ -295,6 +319,8 @@ describe('LobbyService', () => {
   })
 
   describe('delete', () => {
+    beforeEach(setup)
+
     it('should delete lobby', () => {
       // Given
       const lobby = new LobbyData({
@@ -343,6 +369,77 @@ describe('LobbyService', () => {
         notificationService.send.mock.calls[0].arguments[0].userIds,
         ['usr002', 'usr003']
       )
+    })
+  })
+
+  describe('list', () => {
+    beforeEach(setup)
+
+    it('should list all public lobbies', () => {
+      // Given
+      const game = new GameData({
+        id: 'g001',
+        name: 'Test game'
+      })
+
+      const lobbies = [
+        new LobbyData({
+          id: 'l001',
+          isPublic: true
+        }),
+        new LobbyData({
+          id: 'l002',
+          isPublic: true
+        }),
+        new LobbyData({
+          id: 'l003',
+          isPublic: false
+        })
+      ]
+
+      lobbyRepository.listByGame = mock.fn(() => lobbies)
+
+      const expected = lobbies.slice(0, 2)
+
+      // When
+      const actual = lobbyService.list(game)
+
+      // Then
+      assert.deepEqual(actual, expected)
+    })
+
+    it('should not list active lobbies', () => {
+      // Given
+      const game = new GameData({
+        id: 'g001',
+        name: 'Test game'
+      })
+
+      const lobbies = [
+        new LobbyData({
+          id: 'l001',
+          isPublic: true
+        }),
+        new LobbyData({
+          id: 'l002',
+          isPublic: true
+        }),
+        new LobbyData({
+          id: 'l003',
+          isPublic: true,
+          state: LobbyState.Active
+        })
+      ]
+
+      lobbyRepository.listByGame = mock.fn(() => lobbies)
+
+      const expected = lobbies.slice(0, 2)
+
+      // When
+      const actual = lobbyService.list(game)
+
+      // Then
+      assert.deepEqual(actual, expected)
     })
   })
 })

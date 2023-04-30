@@ -43,3 +43,18 @@ export function asSingletonFactory (f) {
   const value = f()
   return () => value
 }
+
+/**
+* Maps an input array into chunks of a given size. The last chunk might be
+* smaller than the requested size.
+*
+* @param {T[]} data Data
+* @param {number} size Chunk size
+* @returns {T[][]} An array of chunks
+* @template T
+*/
+export function chunks (data, size) {
+  const count = Math.ceil(data.length / size)
+  return [...new Array(count)]
+    .map((_, i) => data.slice(i * size, (i + 1) * size))
+}
