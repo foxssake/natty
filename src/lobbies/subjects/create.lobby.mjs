@@ -31,7 +31,7 @@ export function createLobbySubject (server) {
       name: { type: 'string' },
       public: { type: 'boolean' }
     },
-    required: [ 'name' ]
+    required: ['name']
   }, 'lobby/create')
 
   server.handle('lobby/create', async (_peer, corr) => {
