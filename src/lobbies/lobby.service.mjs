@@ -6,6 +6,7 @@ import { GameData } from '../games/game.data.mjs'
 import { NotificationService } from '../notifications/notification.service.mjs'
 /* eslint-enable */
 import assert from 'node:assert'
+import { EventEmitter } from 'node:events'
 import logger from '../logger.mjs'
 import { config } from '../config.mjs'
 import { LobbyData, LobbyState } from './lobby.data.mjs'
@@ -21,7 +22,7 @@ export class LobbyLockedError extends Error { }
 
 /**
 */
-export class LobbyService {
+export class LobbyService extends EventEmitter {
   #log
   /** @type {LobbyRepository} */
   #lobbyRepository
@@ -53,6 +54,7 @@ export class LobbyService {
   * @param {GameData} game Hosting game
   * @param {boolean} isPublic Is public lobby?
   * @returns {LobbyData} New lobby
+  * @fires LobbyService#create
   */
   create (name, owner, game, isPublic) {
     assert(name.length >= config.lobby.minNameLength, 'Lobby name too short!')
@@ -86,6 +88,8 @@ export class LobbyService {
       'Created lobby for user'
     )
 
+    this.emit('create', lobby)
+
     this.join(owner, lobby)
 
     return lobby
@@ -95,6 +99,7 @@ export class LobbyService {
   * Add user to lobby.
   * @param {User} user Joining user
   * @param {LobbyData} lobby Target lobby
+  * @fires LobbyService#join
   */
   join (user, lobby) {
     this.#log.info(
@@ -132,6 +137,8 @@ export class LobbyService {
       'Added user to lobby'
     )
 
+    this.emit('join', lobby, user)
+
     // Notify participants, including joining user
     this.#notificationService.send({
       message: JoinLobbyNotificationMessage(user),
@@ -143,6 +150,7 @@ export class LobbyService {
   * Remove user from lobby.
   * @param {User} user Leaving user
   * @param {LobbyData} lobby Target lobby
+  * @fires LobbyService#leave
   */
   leave (user, lobby) {
     // Do nothing if user is not part of the given lobby ( or any lobby )
@@ -156,6 +164,7 @@ export class LobbyService {
 
     // Remove user from lobby
     this.#participantRepository.removeParticipantFrom(user.id, lobby.id)
+    this.emit('leave', lobby, user)
 
     // Notify participants, including leaving user
     this.#notificationService.send({
@@ -172,12 +181,14 @@ export class LobbyService {
   *
   * This will also remove all participants.
   * @param {LobbyData} lobby Lobby
+  * @fires LobbyService#delete
   */
   delete (lobby) {
     // Delete lobby
     const participants = this.#participantRepository.getParticipantsOf(lobby.id)
     this.#participantRepository.deleteLobby(lobby.id)
     this.#lobbyRepository.remove(lobby.id)
+    this.emit('delete', lobby)
 
     // Notify participants of lobby delete
     this.#notificationService.send({
@@ -211,3 +222,29 @@ export class LobbyService {
       .some(lobby => lobby?.game === gameId)
   }
 }
+
+/**
+* Event fired when a new lobby is created.
+* @event LobbyService#create
+* @param {LobbyData} lobby Lobby
+*/
+
+/**
+* Event fired when a user joins a lobby.
+* @event LobbyService#join
+* @param {LobbyData} lobby Lobby
+* @param {User} user User
+*/
+
+/**
+* Event fired when a user leaves a lobby.
+* @event LobbyService#leave
+* @param {LobbyData} lobby Lobby
+* @param {User} user User
+*/
+
+/**
+* Event fired when a lobby is deleted.
+* @event LobbyService#delete
+* @param {LobbyData} lobby Lobby
+*/
