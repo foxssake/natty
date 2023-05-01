@@ -50,6 +50,8 @@ describe('LobbyService', () => {
       const lobbyName = 'test'
       const ownerUser = new User({ id: 'a', name: 'b' })
       const game = new GameData({ id: 'foo', name: 'Foo game' })
+      const handler = mock.fn(() => {})
+      lobbyService.on('create', handler)
 
       // When
       const actual = lobbyService.create(lobbyName, ownerUser, game)
@@ -59,6 +61,9 @@ describe('LobbyService', () => {
       assert.equal(actual.game, game.id)
       assert.equal(actual.name, lobbyName)
       assert.equal(actual.owner, ownerUser.id)
+
+      assert.equal(handler.mock.callCount(), 1)
+      assert.deepEqual(handler.mock.calls[0].arguments, [actual])
     })
 
     it('should add owner to new lobby', () => {
@@ -151,6 +156,9 @@ describe('LobbyService', () => {
         owner: owner.id
       })
 
+      const handler = mock.fn(() => {})
+      lobbyService.on('join', handler)
+
       participantRepository.getParticipantsOf = mock.fn(
         () => [owner.id, user.id]
       )
@@ -164,6 +172,8 @@ describe('LobbyService', () => {
         notificationService.send.mock.calls[0].arguments[0].userIds,
         [owner.id, user.id]
       )
+      assert.equal(handler.mock.callCount(), 1)
+      assert.deepEqual(handler.mock.calls[0].arguments, [lobby, user])
     })
 
     it('should reject if lobby is locked', () => {
@@ -244,6 +254,9 @@ describe('LobbyService', () => {
         owner: 'usr-owner'
       })
 
+      const handler = mock.fn(() => {})
+      lobbyService.on('leave', handler)
+
       participantRepository.isParticipantOf = mock.fn(() => true)
       participantRepository.getParticipantsOf = () => ['usr01', 'usr02']
 
@@ -265,6 +278,8 @@ describe('LobbyService', () => {
         notificationService.send.mock.calls[0].arguments[0].userIds,
         [user.id, 'usr01', 'usr02']
       )
+      assert.equal(handler.mock.callCount(), 1)
+      assert.deepEqual(handler.mock.calls[0].arguments, [lobby, user])
     })
 
     it('should do nothing if not in lobby', () => {
@@ -336,6 +351,9 @@ describe('LobbyService', () => {
 
       notificationService.send = mock.fn(() => [])
 
+      const handler = mock.fn(() => {})
+      lobbyService.on('delete', handler)
+
       // When
       lobbyService.delete(lobby)
 
@@ -369,6 +387,9 @@ describe('LobbyService', () => {
         notificationService.send.mock.calls[0].arguments[0].userIds,
         ['usr002', 'usr003']
       )
+
+      assert.equal(handler.mock.callCount(), 1)
+      assert.deepEqual(handler.mock.calls[0].arguments, [lobby])
     })
   })
 
