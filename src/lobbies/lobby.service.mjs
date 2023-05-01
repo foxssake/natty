@@ -41,6 +41,7 @@ export class LobbyService extends EventEmitter {
   *   Notification service
   */
   constructor (options) {
+    super()
     this.#lobbyRepository = requireParam(options.lobbyRepository)
     this.#participantRepository = requireParam(options.participantRepository)
     this.#notificationService = requireParam(options.notificationService)
