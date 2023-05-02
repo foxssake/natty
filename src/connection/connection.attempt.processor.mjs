@@ -15,10 +15,8 @@ ajv.addSchema({
       properties: {
         address: { type: 'string' },
         port: { type: 'number' }
-      },
-      required: []
-    },
-    required: ['success']
+      }
+    }
   }
 }, 'connection/handshake/response')
 
@@ -37,22 +35,26 @@ export async function processConnectionAttempt (connectionAttempt) {
   })
 
   connectionAttempt.state = ConnectionAttemptState.Running
+  connectionAttempt.isSuccess = false
   log.info('Processing connection attempt, state set to running')
 
   // Instruct peers to do a handshake, wait for reports
   try{
-    const results = await Promise.all(
+    const results = await Promise.all([
       hostingPeer.send(HandshakeRequestMessage(connectingPeer))
         .next(requireSchema('connection/handshake/response')),
       connectingPeer.send(HandshakeRequestMessage(hostingPeer))
         .next(requireSchema('connection/handshake/response'))
-    )
+    ])
 
     // Check results
     log.info({ results }, 'Gathered handshake results')
-    return results.every(result => result?.success === true)
+    connectionAttempt.isSuccess = results.every(result => result?.success === true)
+    return connectionAttempt.isSuccess
   } catch (err) {
     log.error({ err }, 'Failed to gather handshake results!')
     throw err
+  } finally {
+    connectionAttempt.state = ConnectionAttemptState.Done
   }
 }
