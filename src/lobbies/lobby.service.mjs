@@ -144,7 +144,7 @@ export class LobbyService extends EventEmitter {
     this.#notificationService.send({
       message: JoinLobbyNotificationMessage(user),
       userIds: this.#participantRepository.getParticipantsOf(lobby.id)
-    }).forEach(c => c.finish()) // TODO: Update to single-message correspondence
+    })
   }
 
   /**
@@ -174,7 +174,7 @@ export class LobbyService extends EventEmitter {
         user.id,
         ...this.#participantRepository.getParticipantsOf(lobby.id)
       ]
-    }).forEach(c => c.finish()) // TODO: Update to single-message correspondence
+    })
   }
 
   /**
@@ -195,7 +195,7 @@ export class LobbyService extends EventEmitter {
     this.#notificationService.send({
       message: DeleteLobbyNotificationMessage(lobby),
       userIds: participants
-    }).forEach(c => c.finish()) // TODO: Update to single-message correspondence
+    })
   }
 
   /**
