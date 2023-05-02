@@ -2,7 +2,7 @@
 import { User } from '../users/user.mjs'
 import { LobbyData } from './lobby.data.mjs'
 /* eslint-enable */
-import { Message, MessageHeader } from '@elementbound/nlon'
+import { Message, MessageHeader, MessageTypes } from '@elementbound/nlon'
 
 const Subjects = Object.freeze({
   Join: 'lobby/notif/join',
@@ -20,6 +20,7 @@ export function JoinLobbyNotificationMessage (user) {
     header: new MessageHeader({
       subject: Subjects.Join
     }),
+    type: MessageTypes.Finish, // TODO: Use terminate
     body: {
       user: {
         id: user.id,
@@ -39,6 +40,7 @@ export function LeaveLobbyNotificationMessage (user) {
     header: new MessageHeader({
       subject: Subjects.Leave
     }),
+    type: MessageTypes.Finish, // TODO: Use terminate
     body: {
       user: {
         id: user.id
@@ -57,6 +59,7 @@ export function DeleteLobbyNotificationMessage (lobby) {
     header: new MessageHeader({
       subject: Subjects.Delete
     }),
+    type: MessageTypes.Finish, // TODO: Use terminate
     body: {
       lobby: {
         id: lobby.id
