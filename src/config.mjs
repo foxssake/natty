@@ -25,6 +25,10 @@ export class NattyConfig {
     maxNameLength: number(env.NATTY_LOBBY_MAX_NAME_LENGTH) ?? 128
   }
 
+  connectionDiagnostics = {
+    timeout: number(env.NATTY_CONNECTION_DIAGNOSTICS_TIMEOUT) ?? 8
+  }
+
   games = env.NATTY_GAMES ?? ''
 
   loglevel = getLogLevel()

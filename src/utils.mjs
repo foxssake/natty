@@ -58,3 +58,25 @@ export function chunks (data, size) {
   return [...new Array(count)]
     .map((_, i) => data.slice(i * size, (i + 1) * size))
 }
+
+/**
+* Symbol for timeout.
+*/
+export const Timeout = Symbol('timeout')
+
+/**
+* Limit a promise run to a given timeout.
+*
+* If the promise doesn't resolve in time, the Timeout symbol will be returned.
+* Otherwise, the promise's result will be passed through.
+* @param {Promise<T>} promise Promise
+* @param {number} timeout Timeout in seconds
+* @returns {Promise<T | Symbol>} Promise result or Timeout symbol
+* @template T
+*/
+export function withTimeout (promise, timeout) {
+  return Promise.race(
+    sleep(timeout).then(() => Timeout),
+    promise
+  )
+}
