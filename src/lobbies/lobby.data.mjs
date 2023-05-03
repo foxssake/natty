@@ -1,5 +1,4 @@
-import assert from 'node:assert'
-import { enumerated } from '../config.parsers.mjs'
+import { requireEnum } from '../assertions.mjs'
 
 /**
 * Possible lobby states.
@@ -66,9 +65,6 @@ export class LobbyData {
   */
   constructor (options) {
     options && Object.assign(this, options)
-    assert(
-      enumerated(this.state, Object.values(LobbyState)),
-      'Trying to create lobby with invalid state: ' + this.state
-    )
+    requireEnum(this.state, LobbyState)
   }
 }
