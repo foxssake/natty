@@ -40,7 +40,7 @@ export async function processConnectionAttempt (connectionAttempt) {
   log.info('Processing connection attempt, state set to running')
 
   // Instruct peers to do a handshake, wait for reports
-  try{
+  try {
     const results = await Promise.all([
       hostingPeer.send(HandshakeRequestMessage(connectingPeer))
         .next(requireSchema('connection/handshake/response')),

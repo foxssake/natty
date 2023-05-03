@@ -1,7 +1,9 @@
-import logger from "../logger.mjs";
-import { Timeout, withTimeout } from "../utils.mjs";
-import { ConnectionAttempt, ConnectionAttemptState } from "./connection.attempt.mjs";
-import { processConnectionAttempt } from "./connection.attempt.processor.mjs";
+/* eslint-disable */
+import { ConnectionAttempt, ConnectionAttemptState } from './connection.attempt.mjs'
+/* eslint-enable */
+import logger from '../logger.mjs'
+import { Timeout, withTimeout } from '../utils.mjs'
+import { processConnectionAttempt } from './connection.attempt.processor.mjs'
 
 export class ConnectionAttemptQueue {
   /**
@@ -37,7 +39,7 @@ export class ConnectionAttemptQueue {
     const log = logger.child({
       name: 'ConnectionAttemptQueue',
       connectingPeer: attempt.connectingPeer.id,
-      hostingPeer: attempt.hostingPeer.id 
+      hostingPeer: attempt.hostingPeer.id
     })
     const id = this.#getAttemptId(attempt)
 
