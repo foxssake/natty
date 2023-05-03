@@ -4,7 +4,7 @@ import sinon from 'sinon'
 import { ConnectionAttemptQueue } from '../../../src/connection/connection.attempt.queue.mjs'
 import { ConnectionAttempt, ConnectionAttemptState } from '../../../src/connection/connection.attempt.mjs'
 import { Peer } from '@elementbound/nlon'
-import { sleep, timestamp } from '../../../src/utils.mjs'
+import { sleep } from '../../../src/utils.mjs'
 
 describe('ConnectionAttemptQueue', () => {
   let queue = new ConnectionAttemptQueue()

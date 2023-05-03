@@ -8,13 +8,13 @@ export function timestamp () {
 
 /**
 * Sleep.
-* @param {number} [seconds] Time to sleep in seconds
+* @param {number} seconds Time to sleep in seconds
 * @param {T} [value=undefined] Value to resolve to
 * @returns {Promise<T>} Promise
 * @template T
 */
 export function sleep (seconds, value) {
-  return new Promise(resolve => setTimeout(() => resolve(value), (seconds ?? 0.001) * 1000))
+  return new Promise(resolve => setTimeout(() => resolve(value), seconds * 1000))
 }
 
 /**

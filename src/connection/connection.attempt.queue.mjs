@@ -71,6 +71,10 @@ export class ConnectionAttemptQueue {
       })
   }
 
+  /**
+  * Currently active connection attempts
+  * @type {ConnectionAttempt[]}
+  */
   get attempts () {
     return [...this.#attempts.values()]
   }
