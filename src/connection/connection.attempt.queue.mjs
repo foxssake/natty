@@ -100,3 +100,5 @@ export class ConnectionAttemptQueue {
     return this.#processor(attempt)
   }
 }
+
+export const connectionAttemptQueue = new ConnectionAttemptQueue()

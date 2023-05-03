@@ -37,7 +37,7 @@ export async function processConnectionAttempt (connectionAttempt) {
 
   connectionAttempt.state = ConnectionAttemptState.Running
   connectionAttempt.isSuccess = false
-  log.info('Processing connection attempt, state set to running')
+  log.trace('Processing connection attempt, state set to running')
 
   // Instruct peers to do a handshake, wait for reports
   try {
@@ -49,7 +49,7 @@ export async function processConnectionAttempt (connectionAttempt) {
     ])
 
     // Check results
-    log.info({ results }, 'Gathered handshake results')
+    log.debug({ results }, 'Gathered handshake results')
     connectionAttempt.isSuccess = results.every(result => result?.success === true)
     return connectionAttempt.isSuccess
   } catch (err) {
