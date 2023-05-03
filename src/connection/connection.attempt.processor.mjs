@@ -23,6 +23,7 @@ ajv.addSchema({
 /**
 * Process a connection attempt.
 * @param {ConnectionAttempt} connectionAttempt Connection attempt
+* @returns {Promise<boolean>} Attempt success
 */
 export async function processConnectionAttempt (connectionAttempt) {
   const { hostingPeer, connectingPeer } = connectionAttempt

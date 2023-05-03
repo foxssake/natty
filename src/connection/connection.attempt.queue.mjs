@@ -1,6 +1,6 @@
 import logger from "../logger.mjs";
 import { Timeout, withTimeout } from "../utils.mjs";
-import { ConnectionAttempt } from "./connection.attempt.mjs";
+import { ConnectionAttempt, ConnectionAttemptState } from "./connection.attempt.mjs";
 import { processConnectionAttempt } from "./connection.attempt.processor.mjs";
 
 export class ConnectionAttemptQueue {
@@ -10,11 +10,30 @@ export class ConnectionAttemptQueue {
   #attempts = new Map()
 
   /**
+  * @type {function(ConnectionAttempt): Promise}
+  */
+  #processor
+
+  /**
+  * Construct queue
+  * @param {function(ConnectionAttempt): Promise<boolean>} [processor] Attempt processor
+  */
+  constructor (processor) {
+    this.#processor = processor ?? processConnectionAttempt
+  }
+
+  /*
+  * Add a connection attempt to the queue.
+  *
+  * The attempt will be immediately started and kept track of until it's
+  * complete.
+  *
+  * If the attempt times out, its state will be updated and outcome set to
+  * failure.
   * @param {ConnectionAttempt} attempt
   * @param {number} timeout
   */
   enqueue (attempt, timeout) {
-    // TODO: Doc + UT
     const log = logger.child({
       name: 'ConnectionAttemptQueue',
       connectingPeer: attempt.connectingPeer.id,
@@ -32,10 +51,14 @@ export class ConnectionAttemptQueue {
     this.#attempts.set(id, attempt)
 
     // Process it asap
-    withTimeout(processConnectionAttempt(attempt))
+    withTimeout(this.#processAttempt(attempt))
       .then(result => {
         if (result === Timeout) {
           log.warn('Connection attempt didn\'t complete in %d seconds, ignoring!', timeout)
+          attempt.state = ConnectionAttemptState.Done
+          attempt.isSuccess = false
+        } else {
+          log.debug('Connection attempt completed with result %s', result)
         }
       })
       .catch(err => {
@@ -48,6 +71,10 @@ export class ConnectionAttemptQueue {
       })
   }
 
+  get attempts () {
+    return [...this.#attempts.values()]
+  }
+
   /**
   * Return id unique to connection attempt.
   *
@@ -57,5 +84,13 @@ export class ConnectionAttemptQueue {
   */
   #getAttemptId (attempt) {
     return `${attempt.hostingPeer}:${attempt.connectingPeer}`
+  }
+
+  /**
+  * @param {ConnectionAttempt} attempt
+  * @returns {Promise<boolean>}
+  */
+  #processAttempt (attempt) {
+    return this.#processor(attempt)
   }
 }

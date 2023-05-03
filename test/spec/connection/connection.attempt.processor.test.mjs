@@ -105,14 +105,6 @@ describe('processConnectionAttempt', () => {
       }
     }
 
-    const hostingReport = {
-      success: true,
-      target: {
-        address: '0.0.0.2',
-        port: 2
-      }
-    }
-
     const connectingCorr = sinon.createStubInstance(Correspondence)
     const hostingCorr = sinon.createStubInstance(Correspondence)
 

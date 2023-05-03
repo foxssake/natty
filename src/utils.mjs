@@ -8,11 +8,13 @@ export function timestamp () {
 
 /**
 * Sleep.
-* @param {number} seconds Time to sleep in seconds
-* @returns {Promise<void>} Promise
+* @param {number} [seconds] Time to sleep in seconds
+* @param {T} [value=undefined] Value to resolve to
+* @returns {Promise<T>} Promise
+* @template T
 */
-export function sleep (seconds) {
-  return new Promise(resolve => setTimeout(resolve, seconds * 1000))
+export function sleep (seconds, value) {
+  return new Promise(resolve => setTimeout(() => resolve(value), (seconds ?? 0.001) * 1000))
 }
 
 /**
@@ -75,8 +77,8 @@ export const Timeout = Symbol('timeout')
 * @template T
 */
 export function withTimeout (promise, timeout) {
-  return Promise.race(
-    sleep(timeout).then(() => Timeout),
+  return Promise.race([
+    sleep(timeout, Timeout),
     promise
-  )
+  ])
 }
