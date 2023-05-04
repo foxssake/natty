@@ -9,6 +9,19 @@ import { HandshakeRequestMessage } from './message.templates.mjs'
 ajv.addSchema({
   type: 'object',
   properties: {
+    target: {
+      type: 'object',
+      properties: {
+        address: { type: 'string' },
+        port: { type: 'number' }
+      }
+    }
+  }
+}, 'connection/handshake/request')
+
+ajv.addSchema({
+  type: 'object',
+  properties: {
     success: { type: 'boolean' },
     target: {
       type: 'object',
@@ -37,10 +50,11 @@ export async function processConnectionAttempt (connectionAttempt) {
 
   connectionAttempt.state = ConnectionAttemptState.Running
   connectionAttempt.isSuccess = false
-  log.trace('Processing connection attempt, state set to running')
+  log.info('Processing connection attempt, state set to running')
 
   // Instruct peers to do a handshake, wait for reports
   try {
+    log.info('Sending handshake requests')
     const results = await Promise.all([
       hostingPeer.send(HandshakeRequestMessage(connectingPeer))
         .next(requireSchema('connection/handshake/response')),
@@ -49,7 +63,7 @@ export async function processConnectionAttempt (connectionAttempt) {
     ])
 
     // Check results
-    log.debug({ results }, 'Gathered handshake results')
+    log.info({ results }, 'Gathered handshake results')
     connectionAttempt.isSuccess = results.every(result => result?.success === true)
     return connectionAttempt.isSuccess
   } catch (err) {

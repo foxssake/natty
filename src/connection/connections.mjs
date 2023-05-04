@@ -14,7 +14,7 @@ Natty.hook(() => {
 
   lobbyService.on('join', (lobby, joiningUser) => {
     log.debug(
-      { lobby: lobby.id, user: user.id },
+      { lobby: lobby.id, user: joiningUser.id },
       'User joining lobby, adding new connection pairs to queue'
     )
     const joinerSessions = sessionRepository.findSessionsByGameFor(
