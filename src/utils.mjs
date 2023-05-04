@@ -82,3 +82,55 @@ export function withTimeout (promise, timeout) {
     promise
   ])
 }
+
+/**
+* Generate an array of numbers 0..n
+* @param {number} n Item count
+* @returns {number[]} Numbers
+*/
+export function range (n) {
+  return [...new Array(Math.max(~~n, 0))]
+    .map((_, i) => i)
+}
+
+/**
+* Generate all possible combinations of the values in the given arrays.
+*
+* For example:
+* ```js
+* console.log(['a', 'b'], [0, 1], [true, false])
+* // ['a', 0, true]
+* // ['a', 0, false]
+* // ['a', 1, true]
+* // ['a', 1, false]
+* // ['b', 0, true]
+* // ['b', 0, false]
+* // ['b', 1, true]
+* // ['b', 1, false]
+* ```
+* @param {...Array<T>} arrays Arrays to combine
+* @returns {Array<Array<T>>} Array of combinations
+* @template T
+*/
+export function combine (...arrays) {
+  const count = arrays.map(a => a.length)
+    .reduce((a, b) => a * b, 1)
+  const dimensions = arrays.length
+
+  const result = range(count)
+
+  for (let i = 0; i < count; ++i) {
+    const item = new Array(dimensions)
+    let idx = i
+
+    for (let d = 0; d < dimensions; ++d) {
+      const divisor = arrays[d].length
+      item[d] = arrays[d][idx % divisor]
+      idx = ~~(idx / divisor)
+    }
+
+    result[i] = item
+  }
+
+  return result
+}

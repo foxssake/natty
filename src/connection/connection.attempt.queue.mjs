@@ -53,7 +53,7 @@ export class ConnectionAttemptQueue {
     this.#attempts.set(id, attempt)
 
     // Process it asap
-    withTimeout(this.#processAttempt(attempt))
+    withTimeout(this.#processAttempt(attempt), timeout)
       .then(result => {
         if (result === Timeout) {
           log.warn('Connection attempt didn\'t complete in %d seconds, ignoring!', timeout)
@@ -100,3 +100,5 @@ export class ConnectionAttemptQueue {
     return this.#processor(attempt)
   }
 }
+
+export const connectionAttemptQueue = new ConnectionAttemptQueue()

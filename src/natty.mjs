@@ -10,7 +10,8 @@ import { config } from './config.mjs'
 const defaultModules = [
   'sessions/sessions.mjs',
   'games/games.mjs',
-  'lobbies/lobbies.mjs'
+  'lobbies/lobbies.mjs',
+  'connection/connections.mjs'
 ]
 
 const hooks = []
