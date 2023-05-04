@@ -13,7 +13,7 @@ Natty.hook(() => {
   log.info('Wiring up connection diagnostics')
 
   lobbyService.on('join', (lobby, joiningUser) => {
-    log.debug(
+    log.trace(
       { lobby: lobby.id, user: joiningUser.id },
       'User joining lobby, adding new connection pairs to queue'
     )
