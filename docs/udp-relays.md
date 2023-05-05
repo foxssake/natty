@@ -29,16 +29,16 @@ The idea is to reserve a port for every relay link.
 Take an example of a lobby starting with 3 players: host, client 1 and client 2
 
 1. Natty reserves the relay bindings:
-  1. Port 10001 is reserved for Host
-  1. Port 10002 is reserved for Client 1
-  1. Port 10003 is reserved for Client 2
+    1. Port 10001 is reserved for Host
+    1. Port 10002 is reserved for Client 1
+    1. Port 10003 is reserved for Client 2
 1. Natty instructs the clients to connect to the host
-  1. Client 1 is instructed to connect to Natty:10001
-  1. Client 2 is instructed to connect to Natty:10001
+    1. Client 1 is instructed to connect to Natty:10001
+    1. Client 2 is instructed to connect to Natty:10001
 1. For any incoming traffic
-  1. If it's on port 10001, forward it to Host
-  1. If it's on port 10002, forward it to Client 1
-  1. If it's on port 10003, forward it to Client 2
+    1. If it's on port 10001, forward it to Host
+    1. If it's on port 10002, forward it to Client 1
+    1. If it's on port 10003, forward it to Client 2
 
 This could leave us with something strongly resembling a NAT table:
 
@@ -51,10 +51,10 @@ This could leave us with something strongly resembling a NAT table:
 Which works perfectly, because:
 
 1. Client 1 and Client 2 think the Host is at Natty:10001
-  1. Natty will forward any traffic on 10001 to the Host
+    1. Natty will forward any traffic on 10001 to the Host
 1. Host thinks the Clients are at Natty:10002 and Natty:10003
-  1. Natty will forward any traffic on 10002 to Client 1
-  1. Natty will forward any traffic on 10003 to Client 2
+    1. Natty will forward any traffic on 10002 to Client 1
+    1. Natty will forward any traffic on 10003 to Client 2
 
 **Verdict:**
 * pro: Simple to implement and reason about
