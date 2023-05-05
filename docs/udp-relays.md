@@ -11,14 +11,14 @@ documented plan for this feature.
 ## Constraints
 
 1. The relay must be **transparent**
-  1. Neither of the connected nodes should be able to detect the relay
-  1. This includes not modifying the data in any way
+    1. Neither of the connected nodes should be able to detect the relay
+    1. This includes not modifying the data in any way
 1. The relay must be **consistently addressed**
-  1. For every host, the same client must always appear to have the same,
-     unique address
-  1. For every client, the host must always appear to have the same address
-  1. This address must be unique only in the context of a single lobby
-  1. The address includes the IP address *and* port
+    1. For every host, the same client must always appear to have the same,
+       unique address
+    1. For every client, the host must always appear to have the same address
+    1. This address must be unique only in the context of a single lobby
+    1. The address includes the IP address *and* port
 
 ## Proposed solutions
 
@@ -76,23 +76,23 @@ Let's take an example with two lobbies starting, each with 1 host and 2 clients:
 
 When the lobbies start:
 1. Natty reserves the relay bindings
-  1. Port 10001 is reserved for Host 1 and Host 2
-  1. Port 10002 is reserved for Client 11 and Client 21
-  1. Port 10003 is reserved for Client 12 and Client 22
+    1. Port 10001 is reserved for Host 1 and Host 2
+    1. Port 10002 is reserved for Client 11 and Client 21
+    1. Port 10003 is reserved for Client 12 and Client 22
 1. Natty instructs the clients to connect to their hosts
-  1. Client 11 is instructed to connect to Natty:10001
-  1. Client 12 is instructed to connect to Natty:10001
-  1. Client 21 is instructed to connect to Natty:10001
-  1. Client 22 is instructed to connect to Natty:10001
+    1. Client 11 is instructed to connect to Natty:10001
+    1. Client 12 is instructed to connect to Natty:10001
+    1. Client 21 is instructed to connect to Natty:10001
+    1. Client 22 is instructed to connect to Natty:10001
 1. For any incoming traffic
-  1. If it's from Client 11 on port 10001, forward it to Host 1
-  1. If it's from Client 21 on port 10001, forward it to Host 2
-  1. If it's from Client 12 on port 10001, forward it to Host 1
-  1. If it's from Client 22 on port 10001, forward it to Host 2
-  1. If it's from Host 1 on port 10002, forward it to Client 11
-  1. If it's from Host 2 on port 10002, forward it to Client 21
-  1. If it's from Host 1 on port 10003, forward it to Client 12
-  1. If it's from Host 2 on port 10003, forward it to Client 22
+    1. If it's from Client 11 on port 10001, forward it to Host 1
+    1. If it's from Client 21 on port 10001, forward it to Host 2
+    1. If it's from Client 12 on port 10001, forward it to Host 1
+    1. If it's from Client 22 on port 10001, forward it to Host 2
+    1. If it's from Host 1 on port 10002, forward it to Client 11
+    1. If it's from Host 2 on port 10002, forward it to Client 21
+    1. If it's from Host 1 on port 10003, forward it to Client 12
+    1. If it's from Host 2 on port 10003, forward it to Client 22
 
 This leaves us with the following translation table:
 
