@@ -1,6 +1,6 @@
 /* eslint-disable */
 import dgram from 'node:dgram'
-/* eslint-enable*/
+/* eslint-enable */
 
 export class NetAddress {
   /** @type {string} */
