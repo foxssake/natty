@@ -1,6 +1,6 @@
 {
   "name": "@foxssake/natty",
-  "version": "0.8.1",
+  "version": "0.9.0",
   "description": "Online multiplayer orchestrator and potential game platform",
   "main": "src/natty.mjs",
   "bin": {
