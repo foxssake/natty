@@ -34,7 +34,7 @@ class RelayEntry {
   }
 
   toKey () {
-    return `${remote.toKey()}:${port}`
+    return `${this.remote.toKey()}:${this.port}`
   }
 
   static makeKey (remote, port) {
@@ -56,10 +56,10 @@ export class UDPRelay {
   * allocated port -> socket
   * @type {Map<number, dgram.Socket>}
   */
-  #sockets = Map()
+  #sockets = new Map()
 
   /** @type {Map<string, RelayEntry>} */
-  #bindings = Map()
+  #bindings = new Map()
 
   /**
   * Allocate a new port for relaying.
@@ -69,7 +69,7 @@ export class UDPRelay {
   * @returns {Promise<number>} Allocated port
   */
   allocatePort (port) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       const socket = dgram.createSocket('udp4')
       socket.bind(port, () => {
         port = this.addSocket(socket)
@@ -84,11 +84,21 @@ export class UDPRelay {
   * @returns {number} Relay port
   */
   addSocket (socket) {
-    const port = socket.address.port()
+    const port = socket.address().port
     this.#sockets.set(port, socket)
     socket.on('message', (msg, rinfo) => this.#handle(socket, msg, rinfo))
 
     return port
+  }
+
+  /**
+  * Close the socket associated with the given port.
+  *
+  * Does nothing if the port is not managed by the relay.
+  * @param {number} port Port
+  */
+  freePort (port) {
+    this.#sockets.get(port)?.close()
   }
 
   /**
@@ -135,6 +145,6 @@ export class UDPRelay {
     }
 
     // Forward message
-    socket.send(msg, binding.target.address, binding.target.port)
+    socket.send(msg, binding.target.port, binding.target.address)
   }
 }
