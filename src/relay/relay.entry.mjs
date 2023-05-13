@@ -1,3 +1,5 @@
+import { stringifyEquals } from "../utils.mjs"
+
 /**
 * Entry for the relay translation tables.
 */
@@ -12,7 +14,7 @@ export class RelayEntry {
   * The target address where traffic should be forwarded
   * @type {NetAddress}
   */
-  target
+  address
 
   /**
   * Construct entry
@@ -20,5 +22,15 @@ export class RelayEntry {
   */
   constructor (options) {
     Object.assign(this, options)
+  }
+
+  /**
+  * Check for equality
+  * @param {RelayEntry} other Other
+  * @returns {boolean} True if equal
+  */
+  equals (other) {
+    // TODO: Optimize if needed
+    return stringifyEquals(this, other)
   }
 }
