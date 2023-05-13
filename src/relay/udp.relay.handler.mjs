@@ -2,6 +2,7 @@ import { NetAddress } from "./net.address.mjs";
 import { RelayEntry } from "./relay.entry.mjs";
 import { UDPSocketPool } from "./udp.socket.pool.mjs";
 import { time } from '../utils.mjs'
+import { EventEmitter } from 'node:events'
 
 /**
 * Class implementing the actual relay logic.
@@ -19,7 +20,7 @@ import { time } from '../utils.mjs'
 * we get a packet targeting port 1 from Client, we use port 2 to relay the data
 * to Host. This way, Client will always appear as Natty:2 to the Host.
 */
-export class UDPRelayHandler {
+export class UDPRelayHandler extends EventEmitter {
   /** @type {UDPSocketPool} */
   #socketPool
 
@@ -48,6 +49,8 @@ export class UDPRelayHandler {
       // We already have this relay entry
       return false
     }
+
+    this.emit('create', relay)
 
     const socket = await this.#ensurePort(relay.port)
     socket.on('message', (msg, rinfo) => {
@@ -111,6 +114,22 @@ export class UDPRelayHandler {
     targetRelay.lastSent = time()
 
     return true
+  }
+
+  /**
+  * Socket pool used for relays.
+  * @type {UDPSocketPool}
+  */
+  get socketPool () {
+    return this.#socketPool
+  }
+
+  /**
+  * Relay table used for relays.
+  * @type {RelayEntry[]}
+  */
+  get relayTable () {
+    return [...this.#relayTable]
   }
 
   async #ensurePort (port) {
