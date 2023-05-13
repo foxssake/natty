@@ -134,3 +134,55 @@ data, relay traffic to entry's outgoing address.
 * pro: Way more efficient with ports
 * pro: Boils down to simple table population similar to Naive mapping
 * con: Slightly more complex
+
+## Final result
+
+While the conservative mapping is feasible in implementation and plausible in
+resource usage, unfortunately it is not realistic due to client-side
+constraints.
+
+Most importantly, it's framework support. Part of the target audience is games
+using multiplayer frameworks, as we don't expect everyone to write their own
+multiplayer solution from scratch ( like us, heh heh ). And frameworks *don't
+always allow access to the underlying sockets*. In some cases, sockets per se
+aren't even a concept in the framework. This also means that the client can't
+use the framework's socket to communicate its port to Natty, so we wouldn't
+know where to actually relay the incoming data.
+
+This is slightly different for the hosting application, as frameworks usually
+allow to at least customize the listening port. This allows us to create a
+custom socket to communicate the address and port to Natty, release the socket,
+and instruct the framework to use that port for listening.
+
+### Dynamic naive mapping
+
+This solution is based on the following:
+
+1. We don't know the ports of the clients in advance
+1. We can control the host's port
+1. We have no way to associate traffic with session/lobby based on incoming data
+  1. ( since we don't know in advance the clients ports )
+
+So in essence, what we do is allocate a port for every player - for hosts in
+advance, for clients on the go. This is combined with a port registration
+mechanism for hosts, where they can notify Natty of their remote addresses in
+advance.
+
+So to illustrate step by step:
+
+1. The starting sequence designates a host
+1. The host reports its remote port
+  1. This is done by the host sending some packets with its session ID to a
+     dedicated port
+  1. Natty will store the remote address of the packet along with the session
+     ID
+1. A relay is allocated for the host, along with a dedicated port
+  1. Any traffic arriving on the port will be forwarded to the host
+1. The game starts, clients will start sending traffic to the relay
+  1. In case we already have a dedicated port for the sender, use that
+  1. In case we don't
+    1. Validate that the address belongs to a client in the lobby
+    1. Allocate a port for the client and use that
+
+Aside from automatic cleanup after an interval of inactivity, relays are also
+freed when the lobby closes.
