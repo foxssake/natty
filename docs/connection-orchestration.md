@@ -88,6 +88,8 @@ Firstly, the hosting method is determined:
     1. This will be the lobby owner
 1. Notify designated host, wait for them to ack
     1. The host should prepare for incoming connections and ack
+    1. The host is also required to register their remote address at this point
+    1. See [UDP Relays doc](udp-relays.md)
     1. Error: if the host takes too long to ack, fail lobby
 1. Create a UDP relay for each client
 1. Wait for participants to report
