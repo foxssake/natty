@@ -20,13 +20,13 @@ export class RelayEntry {
   * Time the relay was last used to send data.
   * @type {number}
   */
-  lastSent
+  lastSent = 0
 
   /**
   * Time the relay last received traffic on its port.
   * @type {number}
   */
-  lastReceived
+  lastReceived = 0
 
   /**
   * Construct entry

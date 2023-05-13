@@ -3,6 +3,9 @@ import { RelayEntry } from "./relay.entry.mjs";
 import { UDPSocketPool } from "./udp.socket.pool.mjs";
 import { time } from '../utils.mjs'
 import { EventEmitter } from 'node:events'
+import logger from "../logger.mjs";
+
+const log = logger.child({ name: 'UDPRelayHandler' })
 
 /**
 * Class implementing the actual relay logic.
@@ -34,9 +37,8 @@ export class UDPRelayHandler extends EventEmitter {
   */
   constructor (options) {
     super()
-    options && Object.assign(this, options)
 
-    this.#socketPool ??= new UDPSocketPool()
+    this.#socketPool = options?.socketPool ?? new UDPSocketPool()
   }
 
   /**
@@ -46,8 +48,10 @@ export class UDPRelayHandler extends EventEmitter {
   * already exists
   */
   async createRelay (relay) {
+    log.debug({ relay }, 'Creating relay')
     if (this.hasRelay(relay)) {
       // We already have this relay entry
+      log.trace({ relay }, 'Relay already exists, ignoring')
       return false
     }
 
@@ -57,6 +61,8 @@ export class UDPRelayHandler extends EventEmitter {
     socket.on('message', (msg, rinfo) => {
       this.relay(msg, NetAddress.fromRinfo(rinfo), relay.port)
     })
+    this.#relayTable.push(relay)
+    log.trace({ relay }, 'Relay created')
 
     return true
   }
@@ -94,7 +100,7 @@ export class UDPRelayHandler extends EventEmitter {
   * @returns {Promise<boolean>} True on success
   */
   relay (msg, sender, target) {
-    const senderRelay = this.#relayTable.find(r => r.port === sender.port)
+    const senderRelay = this.#relayTable.find(r => r.address.port === sender.port)
     const targetRelay = this.#relayTable.find(r => r.port === target)
 
     if (!senderRelay || !targetRelay) {
