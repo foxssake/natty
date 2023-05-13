@@ -33,6 +33,7 @@ export class UDPRelayHandler extends EventEmitter {
   * @param {UDPSocketPool} [options.socketPool] Socket pool
   */
   constructor (options) {
+    super()
     options && Object.assign(this, options)
 
     this.#socketPool ??= new UDPSocketPool()

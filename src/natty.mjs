@@ -11,7 +11,8 @@ const defaultModules = [
   'sessions/sessions.mjs',
   'games/games.mjs',
   'lobbies/lobbies.mjs',
-  'connection/connections.mjs'
+  'connection/connections.mjs',
+  'relay/relay.mjs'
 ]
 
 const hooks = []
