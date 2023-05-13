@@ -54,6 +54,7 @@ export class UDPSocketPool {
   */
   freePort (port) {
     this.#sockets.get(port)?.close()
+    this.#sockets.delete(port)
   }
 
   /**
