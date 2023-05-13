@@ -1,7 +1,7 @@
 /* eslint-disable */
 import { Peer } from '@elementbound/nlon'
 /* eslint-enable */
-import { timestamp } from '../utils.mjs'
+import { time } from '../utils.mjs'
 
 /**
 * Session data.
@@ -36,7 +36,7 @@ export class SessionData {
   * Date of the last message received
   * @type {number}
   */
-  lastMessage = timestamp()
+  lastMessage = time()
 
   /**
   * Construct instance.

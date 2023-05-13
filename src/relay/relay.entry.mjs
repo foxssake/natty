@@ -17,6 +17,18 @@ export class RelayEntry {
   address
 
   /**
+  * Time the relay was last used to send data.
+  * @type {number}
+  */
+  lastSent
+
+  /**
+  * Time the relay last received traffic on its port.
+  * @type {number}
+  */
+  lastReceived
+
+  /**
   * Construct entry
   * @param {RelayEntry} options Options
   */

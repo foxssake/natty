@@ -7,7 +7,7 @@ import { GameData } from '../games/game.data.mjs'
 import { nanoid } from 'nanoid'
 import { fail } from 'node:assert'
 import logger from '../logger.mjs'
-import { timestamp } from '../utils.mjs'
+import { time } from '../utils.mjs'
 import { SessionData } from './session.data.mjs'
 import { User } from '../users/user.mjs'
 import { userRepository } from '../users/users.mjs'
@@ -63,7 +63,7 @@ export class SessionService {
     peer.on('correspondence', () => {
       this.#log.debug({ session: session.id },
         'Refreshing session due to new correspondence')
-      session.lastMessage = timestamp()
+      session.lastMessage = time()
     })
 
     this.#log.info({ user, session }, 'Created session for user')

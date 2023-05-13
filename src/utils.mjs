@@ -1,9 +1,9 @@
 /**
-* Return current timestamp ( seconds since epoch ).
+* Return current time ( seconds since epoch ).
 * @returns {number}
 */
-export function timestamp () {
-  return (+(new Date())) / 1000
+export function time () {
+  return (performance.now() + performance.timeOrigin) / 1000
 }
 
 /**

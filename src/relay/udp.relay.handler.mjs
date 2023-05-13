@@ -1,6 +1,7 @@
 import { NetAddress } from "./net.address.mjs";
 import { RelayEntry } from "./relay.entry.mjs";
 import { UDPSocketPool } from "./udp.socket.pool.mjs";
+import { time } from '../utils.mjs'
 
 /**
 * Class implementing the actual relay logic.
@@ -104,6 +105,11 @@ export class UDPRelayHandler {
     }
 
     socket.send(msg)
+
+    // Keep track of traffic timings
+    senderRelay.lastReceived = time()
+    targetRelay.lastSent = time()
+
     return true
   }
 
