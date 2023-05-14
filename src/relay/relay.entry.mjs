@@ -1,4 +1,5 @@
 import { stringifyEquals } from "../utils.mjs"
+import { NetAddress } from "./net.address.mjs"
 
 /**
 * Entry for the relay translation tables.
@@ -42,7 +43,6 @@ export class RelayEntry {
   * @returns {boolean} True if equal
   */
   equals (other) {
-    // TODO: Optimize if needed
-    return stringifyEquals(this, other)
+    return this.address.equals(other.address) && this.port === other.port
   }
 }
