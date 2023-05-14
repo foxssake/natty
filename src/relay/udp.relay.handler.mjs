@@ -1,9 +1,11 @@
-import { NetAddress } from "./net.address.mjs";
-import { RelayEntry } from "./relay.entry.mjs";
-import { UDPSocketPool } from "./udp.socket.pool.mjs";
+/* eslint-disable */
+import { RelayEntry } from './relay.entry.mjs'
+/* eslint-enable */
+import { NetAddress } from './net.address.mjs'
+import { UDPSocketPool } from './udp.socket.pool.mjs'
 import { time } from '../utils.mjs'
 import { EventEmitter } from 'node:events'
-import logger from "../logger.mjs";
+import logger from '../logger.mjs'
 
 const log = logger.child({ name: 'UDPRelayHandler' })
 
@@ -108,10 +110,9 @@ export class UDPRelayHandler extends EventEmitter {
   */
   relay (msg, sender, target) {
     const senderRelay = this.#relayTable.find(r =>
-      r.address.port == sender.port && r.address.address == sender.address
+      r.address.port === sender.port && r.address.address === sender.address
     )
     const targetRelay = this.#relayTable.find(r => r.port === target)
-
 
     if (!senderRelay || !targetRelay) {
       // We don't have a relay for the sender, target, or both

@@ -134,13 +134,3 @@ export function combine (...arrays) {
 
   return result
 }
-
-/**
-* Lazy way to deep-compare two objects.
-* @param {object} a
-* @param {object} b
-* @returns {boolean}
-*/
-export function stringifyEquals (a, b) {
-  return JSON.stringify(a) === JSON.stringify(b)
-}

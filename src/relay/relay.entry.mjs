@@ -1,5 +1,6 @@
-import { stringifyEquals } from "../utils.mjs"
-import { NetAddress } from "./net.address.mjs"
+/* eslint-disable */
+import { NetAddress } from './net.address.mjs'
+/* eslint-enable */
 
 /**
 * Entry for the relay translation tables.

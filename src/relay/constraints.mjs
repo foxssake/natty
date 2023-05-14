@@ -1,5 +1,7 @@
+/* eslint-disable */
+import { UDPRelayHandler } from './udp.relay.handler.mjs'
+/* eslint-enable */
 import assert from 'node:assert'
-import { UDPRelayHandler } from "./udp.relay.handler.mjs";
 
 /**
 * Limit the relay table size to a given maximum. This ensures that we won't

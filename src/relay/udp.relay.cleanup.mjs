@@ -1,5 +1,7 @@
-import { time } from "../utils.mjs";
-import { UDPRelayHandler } from "./udp.relay.handler.mjs";
+/* eslint-disable */
+import { UDPRelayHandler } from './udp.relay.handler.mjs'
+/* eslint-enable */
+import { time } from '../utils.mjs'
 
 /**
 * Remove idle relays.

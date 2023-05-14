@@ -1,8 +1,8 @@
-import { config } from "../config.mjs";
-import { constrainRelayTableSize } from "./constraints.mjs";
-import { UDPRelayHandler } from "./udp.relay.handler.mjs";
+import { config } from '../config.mjs'
+import { constrainRelayTableSize } from './constraints.mjs'
+import { UDPRelayHandler } from './udp.relay.handler.mjs'
 import { Natty } from '../natty.mjs'
-import { cleanupUdpRelayTable } from "./udp.relay.cleanup.mjs";
+import { cleanupUdpRelayTable } from './udp.relay.cleanup.mjs'
 import logger from '../logger.mjs'
 
 export const udpRelayHandler = new UDPRelayHandler()
