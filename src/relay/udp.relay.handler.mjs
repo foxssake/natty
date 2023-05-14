@@ -93,6 +93,13 @@ export class UDPRelayHandler extends EventEmitter {
   }
 
   /**
+  * Free all relay entries, and by extension, sockets in the pool.
+  */
+  clear () {
+    this.relayTable.forEach(entry => this.freeRelay(entry))
+  }
+
+  /**
   * Relay a message from a given sender to target.
   * @param {Buffer} msg Message
   * @param {NetAddress} sender Sender address
@@ -100,8 +107,11 @@ export class UDPRelayHandler extends EventEmitter {
   * @returns {Promise<boolean>} True on success
   */
   relay (msg, sender, target) {
-    const senderRelay = this.#relayTable.find(r => r.address.port === sender.port)
+    const senderRelay = this.#relayTable.find(r =>
+      r.address.port == sender.port && r.address.address == sender.address
+    )
     const targetRelay = this.#relayTable.find(r => r.port === target)
+
 
     if (!senderRelay || !targetRelay) {
       // We don't have a relay for the sender, target, or both
@@ -114,7 +124,7 @@ export class UDPRelayHandler extends EventEmitter {
       return false
     }
 
-    socket.send(msg)
+    socket.send(msg, targetRelay.address.port, targetRelay.address.address)
 
     // Keep track of traffic timings
     senderRelay.lastReceived = time()
