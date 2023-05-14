@@ -9,6 +9,6 @@ import { UDPRelayHandler } from "./udp.relay.handler.mjs";
 */
 export function constrainRelayTableSize (relayHandler, maxSize) {
   relayHandler.on('create', () => {
-    assert(relayHandler.relayTable.length < maxSize, 'Relay table size limit reached!')
+    assert(relayHandler.relayTable.length <= maxSize, 'Relay table size limit reached!')
   })
 }
