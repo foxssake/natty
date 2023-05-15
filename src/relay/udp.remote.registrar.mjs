@@ -1,9 +1,13 @@
 import dgram from 'node:dgram'
+import assert from 'node:assert'
 import { SessionRepository } from '../sessions/session.repository.mjs'
 import { UDPRelayHandler } from './udp.relay.handler.mjs'
 import { RelayEntry } from './relay.entry.mjs'
 import { NetAddress } from './net.address.mjs'
 import { requireParam } from '../assertions.mjs'
+import logger from '../logger.mjs'
+
+const log = logger.child({ name: 'UDPRemoteRegistrar' })
 
 /**
 * @summary Class for remote address registration over UDP.
@@ -70,6 +74,8 @@ export class UDPRemoteRegistrar {
   async #handle (msg, rinfo) {
     try {
       const sessionId = msg.toString('utf8')
+      log.debug({ sessionId, rinfo }, 'Received UDP relay request')
+
       const session = this.#sessionRepository.find(sessionId)
       assert(session, 'Unknown session id!')
 
