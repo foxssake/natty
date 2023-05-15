@@ -29,6 +29,12 @@ export class NattyConfig {
     timeout: number(env.NATTY_CONNECTION_DIAGNOSTICS_TIMEOUT) ?? 8
   }
 
+  udpRelay = {
+    maxSlots: number(env.NATTY_UDP_RELAY_MAX_SLOTS) ?? 16384,
+    timeout: number(env.NATTY_UDP_RELAY_TIMEOUT) ?? 30,
+    cleanupInterval: number(env.NATTY_UDP_RELAY_CLEANUP_INTERVAL) ?? 30
+  }
+
   games = env.NATTY_GAMES ?? ''
 
   loglevel = getLogLevel()

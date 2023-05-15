@@ -16,8 +16,13 @@ export class NetAddress {
     options && Object.assign(this, options)
   }
 
-  toKey () {
-    return `${this.address}:${this.port}`
+  /**
+  * Check for equality
+  * @param {NetAddress} other Other
+  * @returns {boolean} True if equal
+  */
+  equals (other) {
+    return this.address === other.address && this.port === other.port
   }
 
   /**
