@@ -1,7 +1,9 @@
-import dgram from 'node:dgram'
-import assert from 'node:assert'
+/* eslint-disable */
 import { SessionRepository } from '../sessions/session.repository.mjs'
 import { UDPRelayHandler } from './udp.relay.handler.mjs'
+/* eslint-enable */
+import dgram from 'node:dgram'
+import assert from 'node:assert'
 import { RelayEntry } from './relay.entry.mjs'
 import { NetAddress } from './net.address.mjs'
 import { requireParam } from '../assertions.mjs'
@@ -54,8 +56,12 @@ export class UDPRemoteRegistrar {
       port ??= 0
       address ??= '0.0.0.0'
 
-      this.#socket.bind(port, address, resolve)
       this.#socket.on('message', (msg, rinfo) => this.#handle(msg, rinfo))
+      this.#socket.bind(port, address, () => {
+        const address = this.#socket.address()
+        log.info('Listening on %s:%s', address.address, address.port)
+        resolve()
+      })
     })
   }
 

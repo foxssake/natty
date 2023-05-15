@@ -63,6 +63,7 @@ export class UDPRelayHandler extends EventEmitter {
     socket.on('message', (msg, rinfo) => {
       this.relay(msg, NetAddress.fromRinfo(rinfo), relay.port)
     })
+    relay.lastReceived = time()
     this.#relayTable.push(relay)
     log.trace({ relay }, 'Relay created')
 

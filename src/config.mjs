@@ -32,7 +32,8 @@ export class NattyConfig {
   udpRelay = {
     maxSlots: number(env.NATTY_UDP_RELAY_MAX_SLOTS) ?? 16384,
     timeout: number(env.NATTY_UDP_RELAY_TIMEOUT) ?? 30,
-    cleanupInterval: number(env.NATTY_UDP_RELAY_CLEANUP_INTERVAL) ?? 30
+    cleanupInterval: number(env.NATTY_UDP_RELAY_CLEANUP_INTERVAL) ?? 30,
+    registrarPort: number(env.NATTY_UDP_REGISTRAR_PORT) ?? 8809
   }
 
   games = env.NATTY_GAMES ?? ''

@@ -4,13 +4,20 @@ import { UDPRelayHandler } from './udp.relay.handler.mjs'
 import { Natty } from '../natty.mjs'
 import { cleanupUdpRelayTable } from './udp.relay.cleanup.mjs'
 import logger from '../logger.mjs'
+import { UDPRemoteRegistrar } from './udp.remote.registrar.mjs'
+import { sessionRepository } from '../sessions/session.repository.mjs'
 
 export const udpRelayHandler = new UDPRelayHandler()
 constrainRelayTableSize(udpRelayHandler, config.udpRelay.maxSlots)
 
+export const udpRemoteRegistrar = new UDPRemoteRegistrar({
+  sessionRepository,
+  udpRelayHandler
+})
+
 const log = logger.child({ name: 'Relays' })
 
-Natty.hook(natty => {
+Natty.hook(async natty => {
   log.info(
     'Starting periodic UDP relay cleanup job, running every %d sec',
     config.udpRelay.cleanupInterval
@@ -20,8 +27,13 @@ Natty.hook(natty => {
     config.udpRelay.cleanupInterval * 1000
   )
 
+  await udpRemoteRegistrar.listen(config.udpRelay.registrarPort, config.socket.host)
+
   natty.on('close', () => {
     log.info('Natty shutting down, cancelling UDP relay cleanup job')
     clearInterval(cleanupJob)
+
+    log.info('Closing UDP remote registrar socket')
+    udpRemoteRegistrar.socket.close()
   })
 })
