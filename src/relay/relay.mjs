@@ -27,8 +27,10 @@ Natty.hook(async natty => {
     config.udpRelay.cleanupInterval * 1000
   )
 
+  log.info('Listening on port %d for UDP remote registrars', config.udpRelay.registrarPort)
   await udpRemoteRegistrar.listen(config.udpRelay.registrarPort, config.socket.host)
 
+  log.info('Adding shutdown hooks')
   natty.on('close', () => {
     log.info('Natty shutting down, cancelling UDP relay cleanup job')
     clearInterval(cleanupJob)
