@@ -6,6 +6,7 @@ import { UDPRelayHandler } from '../../src/relay/udp.relay.handler.mjs'
 import { RelayEntry } from '../../src/relay/relay.entry.mjs'
 import { NetAddress } from '../../src/relay/net.address.mjs'
 import { sleep } from '../../src/utils.mjs'
+import { UDPSocketPool } from '../../src/relay/udp.socket.pool.mjs'
 
 describe('UDP Relay', { concurrency: false }, async () => {
   const context = new End2EndContext()
