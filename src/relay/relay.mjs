@@ -17,7 +17,7 @@ export const udpRemoteRegistrar = new UDPRemoteRegistrar({
 
 const log = logger.child({ name: 'Relays' })
 
-Natty.hook(async natty => {
+Natty.hook(natty => {
   log.info(
     'Starting periodic UDP relay cleanup job, running every %d sec',
     config.udpRelay.cleanupInterval
@@ -28,7 +28,7 @@ Natty.hook(async natty => {
   )
 
   log.info('Listening on port %d for UDP remote registrars', config.udpRelay.registrarPort)
-  await udpRemoteRegistrar.listen(config.udpRelay.registrarPort, config.socket.host)
+  udpRemoteRegistrar.listen(config.udpRelay.registrarPort, config.socket.host)
 
   log.info('Adding shutdown hooks')
   natty.on('close', () => {
