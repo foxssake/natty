@@ -54,7 +54,7 @@ export function constrainGlobalBandwidth (relayHandler, traffic, interval) {
     interval: interval ?? 1
   })
 
-  relayHandler.on('transmit', (source, _target, message) => {
+  relayHandler.on('transmit', (_source, _target, message) => {
     limiter.validate(message.length)
   })
 }
