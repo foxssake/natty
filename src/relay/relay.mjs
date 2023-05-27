@@ -6,6 +6,7 @@ import { cleanupUdpRelayTable } from './udp.relay.cleanup.mjs'
 import logger from '../logger.mjs'
 import { UDPRemoteRegistrar } from './udp.remote.registrar.mjs'
 import { sessionRepository } from '../sessions/session.repository.mjs'
+import { formatByteSize } from '../utils.mjs'
 
 export const udpRelayHandler = new UDPRelayHandler()
 constrainRelayTableSize(udpRelayHandler, config.udpRelay.maxSlots)
@@ -32,8 +33,8 @@ Natty.hook(natty => {
 
   log.info(
     'Limiting relay bandwidth to %s/s and global bandwidth to %s/s',
-    config.udpRelay.maxIndividualTraffic,
-    config.udpRelay.maxGlobalTraffic
+    formatByteSize(config.udpRelay.maxIndividualTraffic),
+    formatByteSize(config.udpRelay.maxGlobalTraffic)
   )
 
   constrainIndividualBandwidth(
