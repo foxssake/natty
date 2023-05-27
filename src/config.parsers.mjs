@@ -28,7 +28,7 @@ export function byteSize (value) {
   }
 
   const postfixes = ['kb', 'mb', 'gb', 'tb', 'pb', 'eb', 'zb', 'yb']
-  const pattern = /^([0-9\.,]+)([a-zA-Z]*)/
+  const pattern = /^([0-9.,]+)([a-zA-Z]*)/
 
   const groups = pattern.exec(value)
   assert(groups, `Input "${value}" is not a size!`)

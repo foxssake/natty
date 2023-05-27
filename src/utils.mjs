@@ -144,8 +144,8 @@ export function combine (...arrays) {
 */
 export function formatByteSize (size) {
   const postfixes = ['b', 'kb', 'Mb', 'Gb', 'Tb', 'Pb', 'Eb', 'Zb', 'Yb']
-  const pfi = (postfixes.length + postfixes.findIndex((_, i) => size < Math.pow(1024, i+1)))
-    % postfixes.length
+  const pfi = (postfixes.length + postfixes.findIndex((_, i) => size < Math.pow(1024, i + 1))) %
+    postfixes.length
 
   return (size / Math.pow(1024, pfi)) + postfixes[pfi]
 }

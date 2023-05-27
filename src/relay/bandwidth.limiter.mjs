@@ -1,6 +1,6 @@
 import assert from 'node:assert'
-import { requireParam } from "../assertions.mjs"
-import { time } from "../utils.mjs"
+import { requireParam } from '../assertions.mjs'
+import { time } from '../utils.mjs'
 
 export class BandwidthLimiter {
   #interval
