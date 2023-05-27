@@ -11,6 +11,7 @@ describe('UDPRelayHandler', () => {
   describe('createRelay', () => {
     it('should create relay', async () => {
       // Given
+      const handler = sinon.stub()
       const socket = sinon.createStubInstance(dgram.Socket)
       const socketPool = sinon.createStubInstance(UDPSocketPool)
       socketPool.getSocket.returns(socket)
@@ -27,11 +28,14 @@ describe('UDPRelayHandler', () => {
         socketPool
       })
 
+      relayHandler.on('create', handler)
+
       // When
       await relayHandler.createRelay(relay)
 
       // Then
       assert.deepEqual(relayHandler.relayTable, [relay])
+      assert(handler.calledWith(relay), 'Create event not emitted!')
     })
 
     it('should ignore if relay exists', async () => {
@@ -65,6 +69,7 @@ describe('UDPRelayHandler', () => {
   describe('freeRelay', () => {
     it('should free relay', async () => {
       // Given
+      const handler = sinon.stub()
       const socket = sinon.createStubInstance(dgram.Socket)
       const socketPool = sinon.createStubInstance(UDPSocketPool)
       socketPool.getSocket.returns(socket)
@@ -81,6 +86,7 @@ describe('UDPRelayHandler', () => {
         socketPool
       })
       await relayHandler.createRelay(relay)
+      relayHandler.on('destroy', handler)
 
       // When
       const result = relayHandler.freeRelay(relay)
@@ -89,6 +95,7 @@ describe('UDPRelayHandler', () => {
       assert.equal(result, true)
       assert(socketPool.freePort.calledOnceWith(10001))
       assert.deepEqual(relayHandler.relayTable, [])
+      assert(handler.calledWith(relay), 'Destroy event not emitted!')
     })
 
     it('should ignore unknown', async () => {
@@ -135,10 +142,12 @@ describe('UDPRelayHandler', () => {
       const socket = sinon.createStubInstance(dgram.Socket)
       const socketPool = sinon.createStubInstance(UDPSocketPool)
       socketPool.getSocket.returns(socket)
+      const handler = sinon.stub()
 
       const relayHandler = new UDPRelayHandler({
         socketPool
       })
+      relayHandler.on('transmit', handler)
 
       await relayHandler.createRelay(new RelayEntry({
         port: 10001,
@@ -167,6 +176,7 @@ describe('UDPRelayHandler', () => {
       assert(success, 'Relay failed!')
       assert(socketPool.getSocket.calledOnceWith(10002), 'Socket not queried!')
       assert(socket.send.calledWith(message), 'Message not sent!')
+      assert(handler.calledOnce, 'Transmit event not emitted!')
     })
 
     it('should ignore unknown address', async () => {
