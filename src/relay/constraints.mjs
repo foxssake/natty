@@ -81,15 +81,11 @@ export function constrainTraffic (relayHandler, traffic) {
 
   relayHandler.on('transmit', (source, _target, message) => {
     const id = source.id
-    console.log(`Transmitting ${message.byteLength} bytes on ${id}`)
     relayTraffic.set(id, (relayTraffic.get(id) ?? 0) + message.byteLength)
-    console.log(`Checking current traffic of ${relayTraffic.get(id)} to be under ${traffic}`)
     assert(relayTraffic.get(id) < traffic, 'Relay has hit lifetime traffic limit!')
-    console.log('OK!')
   })
 
   relayHandler.on('destroy', relay => {
-    console.log('Forgetting relay', relay.id)
     relayTraffic.delete(relay.id)
   })
 }

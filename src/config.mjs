@@ -37,7 +37,9 @@ export class NattyConfig {
 
     maxIndividualTraffic: byteSize(env.NATTY_UDP_RELAY_MAX_INDIVIDUAL_TRAFFIC ?? '128kb'),
     maxGlobalTraffic: byteSize(env.NATTY_UDP_RELAY_MAX_GLOBAL_TRAFFIC ?? '1gb'),
-    trafficInterval: number(env.NATTY_UDP_RELAY_TRAFFIC_INTERVAL) ?? 0.1
+    trafficInterval: number(env.NATTY_UDP_RELAY_TRAFFIC_INTERVAL) ?? 0.1,
+    maxLifetimeDuration: number(env.NATTY_UDP_RELAY_MAX_LIFETIME_DURATION) ?? 4 * 3600,
+    maxLifetimeTraffic: byteSize(env.NATTY_UDP_RELAY_MAX_LIFETIME_TRAFFIC ?? '4gb')
   }
 
   games = env.NATTY_GAMES ?? ''

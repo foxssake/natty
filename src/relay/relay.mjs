@@ -1,5 +1,5 @@
 import { config } from '../config.mjs'
-import { constrainGlobalBandwidth, constrainIndividualBandwidth, constrainRelayTableSize } from './constraints.mjs'
+import { constrainGlobalBandwidth, constrainIndividualBandwidth, constrainLifetime, constrainRelayTableSize, constrainTraffic } from './constraints.mjs'
 import { UDPRelayHandler } from './udp.relay.handler.mjs'
 import { Natty } from '../natty.mjs'
 import { cleanupUdpRelayTable } from './udp.relay.cleanup.mjs'
@@ -43,6 +43,15 @@ Natty.hook(natty => {
   constrainGlobalBandwidth(
     udpRelayHandler, config.udpRelay.maxGlobalTraffic, config.udpRelay.trafficInterval
   )
+
+  log.info(
+    'Blocking relay traffic after %d seconds or %s',
+    config.udpRelay.maxLifetimeDuration,
+    formatByteSize(config.udpRelay.maxLifetimeTraffic)
+  )
+
+  constrainLifetime(udpRelayHandler, config.udpRelay.maxLifetimeDuration)
+  constrainTraffic(udpRelayHandler, config.udpRelay.maxLifetimeTraffic)
 
   log.info('Adding shutdown hooks')
   natty.on('close', () => {
