@@ -22,6 +22,12 @@ export function number (value) {
   return isNaN(result) ? undefined : result
 }
 
+/**
+* Parse config value as human-readable size
+*
+* @param {any} value Value
+* @returns {number?} Number or undefined
+*/
 export function byteSize (value) {
   if (value === undefined) {
     return value

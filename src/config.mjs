@@ -35,8 +35,8 @@ export class NattyConfig {
     cleanupInterval: number(env.NATTY_UDP_RELAY_CLEANUP_INTERVAL) ?? 30,
     registrarPort: number(env.NATTY_UDP_REGISTRAR_PORT) ?? 8809,
 
-    maxIndividualTraffic: byteSize(env.NATTY_UDP_RELAY_MAX_INDIVIDUAL_TRAFFIC) ?? 128 * 1024,
-    maxGlobalTraffic: byteSize(env.NATTY_UDP_RELAY_MAX_GLOBAL_TRAFFIC) ?? 1024 * 1024 * 1024,
+    maxIndividualTraffic: byteSize(env.NATTY_UDP_RELAY_MAX_INDIVIDUAL_TRAFFIC ?? '128kb'),
+    maxGlobalTraffic: byteSize(env.NATTY_UDP_RELAY_MAX_GLOBAL_TRAFFIC ?? '1gb'),
     trafficInterval: number(env.NATTY_UDP_RELAY_TRAFFIC_INTERVAL) ?? 0.1
   }
 

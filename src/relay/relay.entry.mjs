@@ -52,6 +52,6 @@ export class RelayEntry {
   * @type {string}
   */
   get id () {
-    return `${this.address}:${this.port}`
+    return `${this.address}@${this.port}`
   }
 }

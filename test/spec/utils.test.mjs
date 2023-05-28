@@ -1,7 +1,7 @@
 import { describe, it, before, after } from 'node:test'
 import assert from 'node:assert'
 import sinon from 'sinon'
-import { Timeout, combine, range, sleep, timestamp, withTimeout } from '../../src/utils.mjs'
+import { Timeout, combine, formatByteSize, range, sleep, withTimeout } from '../../src/utils.mjs'
 
 describe('utils', () => {
   describe('withTimeout', () => {
@@ -114,5 +114,24 @@ describe('utils', () => {
       // Compare sorted, since order doesn't matter
       assert.deepEqual(actual.sort(), expected.sort())
     })
+  })
+
+  describe('formatByteSize', () => {
+    const cases = [
+      [128 * Math.pow(1024, 0), '128b'],
+      [128 * Math.pow(1024, 1), '128kb'],
+      [128 * Math.pow(1024, 2), '128Mb'],
+      [128 * Math.pow(1024, 3), '128Gb'],
+      [128 * Math.pow(1024, 4), '128Tb'],
+      [128 * Math.pow(1024, 5), '128Pb'],
+      [128 * Math.pow(1024, 6), '128Eb'],
+      [128 * Math.pow(1024, 7), '128Zb'],
+      [128 * Math.pow(1024, 8), '128Yb'],
+      [8 * Math.pow(1024, 9), '8192Yb'],
+    ]
+
+    cases.forEach(([input, expected]) => it(`should parse ${expected}`, () =>
+      assert.equal(formatByteSize(input), expected)
+    ))
   })
 })

@@ -2,6 +2,19 @@ import assert from 'node:assert'
 import { requireParam } from '../assertions.mjs'
 import { time } from '../utils.mjs'
 
+/**
+* Generic component to limit bandwidth usage.
+*
+* Internally, the bandwidth limiter divides chunks into time slices of
+* `interval` length. Every time slice is allocated a certain amount of data
+* transfer based on the max traffic specified in bytes/sec ( i.e. if interval
+* is 1/8th of a second, then the max traffic for a time slice is 1/8th of the
+* max traffic ).
+*
+* For any traffic that is within the limit, the counter is increased and the
+* validation passes. Once the time slice expires, the counter is reset and a
+* new one is started.
+*/
 export class BandwidthLimiter {
   #interval
   #maxTraffic
