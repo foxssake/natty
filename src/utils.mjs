@@ -159,15 +159,15 @@ export function formatByteSize (size) {
 */
 export function formatDuration (seconds) {
   const units = Object.entries({
-    'us': 0.000001,
-    'ms': 0.001,
-    'sec': 1,
-    'min': 60,
-    'hr': 3600,
-    'day': 86400,
-    'wk': 604800,
-    'mo': 2592000,
-    'yr': 31536000
+    us: 0.000001,
+    ms: 0.001,
+    sec: 1,
+    min: 60,
+    hr: 3600,
+    day: 86400,
+    wk: 604800,
+    mo: 2592000,
+    yr: 31536000
   }).reverse()
 
   const [unit, multiplier] = units.find(([_, f]) => seconds > f) ?? units.at(-1)

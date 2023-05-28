@@ -70,16 +70,16 @@ export function duration (value) {
 
   const units = {
     '': 1,
-    'us': 0.000001,
-    'ms': 0.001,
-    's': 1,
-    'm': 60,
-    'h': 3600,
-    'hr': 3600,
-    'd': 86400,
-    'w': 604800,
-    'mo': 2592000,
-    'yr': 31536000
+    us: 0.000001,
+    ms: 0.001,
+    s: 1,
+    m: 60,
+    h: 3600,
+    hr: 3600,
+    d: 86400,
+    w: 604800,
+    mo: 2592000,
+    yr: 31536000
   }
 
   const [nominator, unit] = extractUnit(value.toLowerCase())
