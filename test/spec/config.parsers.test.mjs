@@ -1,6 +1,6 @@
 import { describe, it } from 'node:test'
 import assert from 'node:assert'
-import { byteSize, enumerated, integer, number } from '../../src/config.parsers.mjs'
+import { byteSize, duration, enumerated, integer, number } from '../../src/config.parsers.mjs'
 
 function Case(name, input, expected) {
   return { name, input, expected }
@@ -82,6 +82,38 @@ describe('byteSize', () => {
   throwCases.forEach(kase =>
     it(kase.name, () => assert.throws(() =>
       byteSize(kase.input)
+    ))
+  )
+})
+
+describe('duration', () => {
+  const validCases = [
+    Case('should pass through undefined', undefined, undefined),
+    Case('should parse without postfix', '64', 64),
+    Case('should parse usec', '64us', 0.000064),
+    Case('should parse msec', '64ms', 0.064),
+    Case('should parse sec', '64s', 64),
+    Case('should parse minute', '10m', 600),
+    Case('should parse hour', '4h', 14400),
+    Case('should parse hour', '4hr', 14400),
+    Case('should parse day', '2d', 172800),
+    Case('should parse week', '2w', 1209600),
+    Case('should parse month', '3mo', 7776000),
+    Case('should parse year', '4yr', 126144000),
+  ]
+
+  const throwCases = [
+    Case('should throw on invalid format', 'no6'),
+    Case('should throw on invalid postfix', '64mh')
+  ]
+
+  validCases.forEach(kase =>
+    it(kase.name, () => assert.equal(duration(kase.input), kase.expected))
+  )
+
+  throwCases.forEach(kase =>
+    it(kase.name, () => assert.throws(() =>
+      duration(kase.input)
     ))
   )
 })

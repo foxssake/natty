@@ -1,7 +1,7 @@
 import { describe, it, before, after } from 'node:test'
 import assert from 'node:assert'
 import sinon from 'sinon'
-import { Timeout, combine, formatByteSize, range, sleep, withTimeout } from '../../src/utils.mjs'
+import { Timeout, combine, formatByteSize, formatDuration, range, sleep, withTimeout } from '../../src/utils.mjs'
 
 describe('utils', () => {
   describe('withTimeout', () => {
@@ -130,8 +130,27 @@ describe('utils', () => {
       [8 * Math.pow(1024, 9), '8192Yb'],
     ]
 
-    cases.forEach(([input, expected]) => it(`should parse ${expected}`, () =>
+    cases.forEach(([input, expected]) => it(`should format ${expected}`, () =>
       assert.equal(formatByteSize(input), expected)
+    ))
+  })
+
+  describe('formatDuration', () => {
+    const cases = [
+      [0.0000002, '0.2us'],
+      [0.000002, '2us'],
+      [0.002, '2ms'],
+      [2, '2sec'],
+      [120, '2min'],
+      [7200, '2hr'],
+      [172800, '2day'],
+      [1814400, '3wk'],
+      [10368000, '4mo'],
+      [378432000, '12yr']
+    ]
+
+    cases.forEach(([input, expected]) => it(`should format ${expected}`, () =>
+      assert.equal(formatDuration(input), expected)
     ))
   })
 })

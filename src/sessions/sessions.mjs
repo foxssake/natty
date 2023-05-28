@@ -14,8 +14,8 @@ Natty.hook(natty => {
 
   log.info('Starting session cleanup job')
   const cleanupJob = startCleanupJob({
-    timeout: config.session.timeout * 1000,
-    interval: config.session.cleanupInterval * 1000,
+    timeout: config.session.timeout,
+    interval: config.session.cleanupInterval,
     sessionRepository,
     sessionService
   })

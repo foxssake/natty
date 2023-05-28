@@ -149,3 +149,28 @@ export function formatByteSize (size) {
 
   return (size / Math.pow(1024, pfi)) + postfixes[pfi]
 }
+
+/**
+* Format a duration to a human readable form.
+*
+* For example, 720 becomes 12min.
+* @param {number} seconds Duration in seconds
+* @returns {string} Human readable duration
+*/
+export function formatDuration (seconds) {
+  const units = Object.entries({
+    'us': 0.000001,
+    'ms': 0.001,
+    'sec': 1,
+    'min': 60,
+    'hr': 3600,
+    'day': 86400,
+    'wk': 604800,
+    'mo': 2592000,
+    'yr': 31536000
+  }).reverse()
+
+  const [unit, multiplier] = units.find(([_, f]) => seconds > f) ?? units.at(-1)
+
+  return (seconds / multiplier) + unit
+}
