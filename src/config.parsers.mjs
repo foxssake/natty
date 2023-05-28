@@ -23,6 +23,20 @@ export function number (value) {
 }
 
 /**
+* Split an input into nominator and unit
+* @param {string} value
+* @returns {number[]}
+*/
+function extractUnit (value) {
+  const pattern = /^([0-9.,]+)([a-zA-Z]*)/
+
+  const groups = pattern.exec(value)
+  assert(groups, `Can't parse input "${value}"`)
+
+  return [groups[1], groups[2]]
+}
+
+/**
 * Parse config value as human-readable size
 *
 * @param {any} value Value
@@ -33,23 +47,45 @@ export function byteSize (value) {
     return value
   }
 
-  const postfixes = ['kb', 'mb', 'gb', 'tb', 'pb', 'eb', 'zb', 'yb']
-  const pattern = /^([0-9.,]+)([a-zA-Z]*)/
+  const postfixes = ['b', 'kb', 'mb', 'gb', 'tb', 'pb', 'eb', 'zb', 'yb']
 
-  const groups = pattern.exec(value)
-  assert(groups, `Input "${value}" is not a size!`)
+  const [nominator, unit] = extractUnit(value)
 
-  const nominator = groups[1]
-  const postfix = groups[2]
+  const idx = postfixes.findIndex(pf => pf === (unit || 'b').toLowerCase())
+  assert(idx >= 0, `Unknown byte postfix "${unit}"!`)
 
-  if (!postfix) {
-    return number(value)
+  return number(nominator) * Math.pow(1024, idx)
+}
+
+/**
+* Parse config value as human-readable duration
+*
+* @param {any} value Value
+* @returns {number?} Number or undefined
+*/
+export function duration (value) {
+  if (value === undefined) {
+    return value
   }
 
-  const idx = postfixes.findIndex(pf => pf === postfix.toLowerCase())
-  assert(idx >= 0, `Unknown byte postfix "${postfix}"!`)
+  const units = {
+    '': 1,
+    us: 0.000001,
+    ms: 0.001,
+    s: 1,
+    m: 60,
+    h: 3600,
+    hr: 3600,
+    d: 86400,
+    w: 604800,
+    mo: 2592000,
+    yr: 31536000
+  }
 
-  return number(nominator) * Math.pow(1024, idx + 1)
+  const [nominator, unit] = extractUnit(value.toLowerCase())
+  assert(units[unit], `Unknown duration unit "${unit}"!`)
+
+  return number(nominator) * units[unit]
 }
 
 /**

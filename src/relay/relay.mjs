@@ -1,12 +1,12 @@
 import { config } from '../config.mjs'
-import { constrainGlobalBandwidth, constrainIndividualBandwidth, constrainRelayTableSize } from './constraints.mjs'
+import { constrainGlobalBandwidth, constrainIndividualBandwidth, constrainLifetime, constrainRelayTableSize, constrainTraffic } from './constraints.mjs'
 import { UDPRelayHandler } from './udp.relay.handler.mjs'
 import { Natty } from '../natty.mjs'
 import { cleanupUdpRelayTable } from './udp.relay.cleanup.mjs'
 import logger from '../logger.mjs'
 import { UDPRemoteRegistrar } from './udp.remote.registrar.mjs'
 import { sessionRepository } from '../sessions/session.repository.mjs'
-import { formatByteSize } from '../utils.mjs'
+import { formatByteSize, formatDuration } from '../utils.mjs'
 
 export const udpRelayHandler = new UDPRelayHandler()
 constrainRelayTableSize(udpRelayHandler, config.udpRelay.maxSlots)
@@ -20,8 +20,8 @@ const log = logger.child({ name: 'Relays' })
 
 Natty.hook(natty => {
   log.info(
-    'Starting periodic UDP relay cleanup job, running every %d sec',
-    config.udpRelay.cleanupInterval
+    'Starting periodic UDP relay cleanup job, running every %s',
+    formatDuration(config.udpRelay.cleanupInterval)
   )
   const cleanupJob = setInterval(
     () => cleanupUdpRelayTable(udpRelayHandler, config.udpRelay.timeout),
@@ -43,6 +43,15 @@ Natty.hook(natty => {
   constrainGlobalBandwidth(
     udpRelayHandler, config.udpRelay.maxGlobalTraffic, config.udpRelay.trafficInterval
   )
+
+  log.info(
+    'Blocking relay traffic after %s or %s',
+    formatDuration(config.udpRelay.maxLifetimeDuration),
+    formatByteSize(config.udpRelay.maxLifetimeTraffic)
+  )
+
+  constrainLifetime(udpRelayHandler, config.udpRelay.maxLifetimeDuration)
+  constrainTraffic(udpRelayHandler, config.udpRelay.maxLifetimeTraffic)
 
   log.info('Adding shutdown hooks')
   natty.on('close', () => {
