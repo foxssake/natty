@@ -1,6 +1,7 @@
 /* eslint-disable */
 import { NetAddress } from './net.address.mjs'
 /* eslint-enable */
+import { time } from '../utils.mjs'
 
 /**
 * Entry for the relay translation tables.
@@ -29,6 +30,12 @@ export class RelayEntry {
   * @type {number}
   */
   lastReceived = 0
+
+  /**
+  * Time the relay was created.
+  * @type {number}
+  */
+  created = time()
 
   /**
   * Construct entry
