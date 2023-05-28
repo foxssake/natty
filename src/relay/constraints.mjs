@@ -3,6 +3,7 @@ import { BandwidthLimiter } from './bandwidth.limiter.mjs'
 import { UDPRelayHandler } from './udp.relay.handler.mjs'
 /* eslint-enable */
 import assert from 'node:assert'
+import { time } from '../utils.mjs'
 
 /**
 * Limit the relay table size to a given maximum. This ensures that we won't
@@ -56,5 +57,16 @@ export function constrainGlobalBandwidth (relayHandler, traffic, interval) {
 
   relayHandler.on('transmit', (_source, _target, message) => {
     limiter.validate(message.length)
+  })
+}
+
+/**
+* Block all traffic on relays after they've been active for a given duration.
+* @param {UDPRelayHandler} relayHandler Relay handler
+* @param {number} duration Duration in seconds
+*/
+export function constrainLifetime (relayHandler, duration) {
+  relayHandler.on('transmit', (source, _target, _message) => {
+    assert(time() - source.created < duration, 'Relay has hit lifetime duration limit!')
   })
 }
