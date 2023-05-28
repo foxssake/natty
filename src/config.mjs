@@ -1,5 +1,5 @@
 import * as dotenv from 'dotenv'
-import { integer, number } from './config.parsers.mjs'
+import { byteSize, integer, number } from './config.parsers.mjs'
 import logger, { getLogLevel } from './logger.mjs'
 
 dotenv.config()
@@ -33,7 +33,11 @@ export class NattyConfig {
     maxSlots: number(env.NATTY_UDP_RELAY_MAX_SLOTS) ?? 16384,
     timeout: number(env.NATTY_UDP_RELAY_TIMEOUT) ?? 30,
     cleanupInterval: number(env.NATTY_UDP_RELAY_CLEANUP_INTERVAL) ?? 30,
-    registrarPort: number(env.NATTY_UDP_REGISTRAR_PORT) ?? 8809
+    registrarPort: number(env.NATTY_UDP_REGISTRAR_PORT) ?? 8809,
+
+    maxIndividualTraffic: byteSize(env.NATTY_UDP_RELAY_MAX_INDIVIDUAL_TRAFFIC ?? '128kb'),
+    maxGlobalTraffic: byteSize(env.NATTY_UDP_RELAY_MAX_GLOBAL_TRAFFIC ?? '1gb'),
+    trafficInterval: number(env.NATTY_UDP_RELAY_TRAFFIC_INTERVAL) ?? 0.1
   }
 
   games = env.NATTY_GAMES ?? ''

@@ -25,6 +25,10 @@ export class NetAddress {
     return this.address === other.address && this.port === other.port
   }
 
+  toString () {
+    return `${this.address}:${this.port}`
+  }
+
   /**
   * @param {dgram.RemoteInfo} rinfo
   * @returns {NetAddress}

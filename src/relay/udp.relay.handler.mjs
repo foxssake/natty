@@ -48,6 +48,7 @@ export class UDPRelayHandler extends EventEmitter {
   * @param {RelayEntry} relay Relay
   * @return {Promise<boolean>} True if the entry was created, false if it
   * already exists
+  * @fires UDPRelayHandler#create
   */
   async createRelay (relay) {
     log.debug({ relay }, 'Creating relay')
@@ -83,12 +84,15 @@ export class UDPRelayHandler extends EventEmitter {
   * Free a relay entry, removing it from the table and freeing any associated resources.
   * @param {RelayEntry} relay Relay
   * @returns {boolean} True if a relay was freed
+  * @fires UDPRelayHandler#destroy
   */
   freeRelay (relay) {
     const idx = this.#relayTable.findIndex(e => e.equals(relay))
     if (idx < 0) {
       return false
     }
+
+    this.emit('destroy', relay)
 
     this.#socketPool.freePort(relay.port)
     this.#relayTable = this.#relayTable.filter((_, i) => i !== idx)
@@ -108,6 +112,7 @@ export class UDPRelayHandler extends EventEmitter {
   * @param {NetAddress} sender Sender address
   * @param {number} target Target port
   * @returns {Promise<boolean>} True on success
+  * @fires UDPRelayHandler#transmit
   */
   relay (msg, sender, target) {
     const senderRelay = this.#relayTable.find(r =>
@@ -125,6 +130,8 @@ export class UDPRelayHandler extends EventEmitter {
       // For some reason we don't have the socket
       return false
     }
+
+    this.emit('transmit', senderRelay, targetRelay)
 
     socket.send(msg, targetRelay.address.port, targetRelay.address.address)
 
@@ -159,3 +166,32 @@ export class UDPRelayHandler extends EventEmitter {
     return this.#socketPool.getSocket(port)
   }
 }
+
+/**
+* Relay creation event.
+*
+* This is emitted *before* the relay is pushed, giving the handler a change to
+* reject by throwing.
+* @event UDPRelayHandler#create
+* @param {RelayEntry} relay Relay entry
+*/
+
+/**
+* Relay transmission event.
+*
+* This event is emitted *before* the packet is transmitted from the source
+* relay to the target relay.
+* @event UDPRelayHandler#transmit
+* @param {RelayEntry} sourceRelay Source relay
+* @param {RelayEntry} targetRelay Target relay
+* @param {Buffer} message Message
+*/
+
+/**
+* Relay destroy event.
+*
+* This event is emitted *before* a relay and its associated resources are
+* freed.
+* @event UDPRelayHandler#destroy
+* @param {RelayEntry} relay Relay being freed.
+*/

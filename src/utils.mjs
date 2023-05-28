@@ -134,3 +134,18 @@ export function combine (...arrays) {
 
   return result
 }
+
+/**
+* Format a size in bytes to a human readable form.
+*
+* For example, 131072 becomes 128kb.
+* @param {number} size Size in bytes
+* @returns {string} Human readable size
+*/
+export function formatByteSize (size) {
+  const postfixes = ['b', 'kb', 'Mb', 'Gb', 'Tb', 'Pb', 'Eb', 'Zb', 'Yb']
+  const pfi = (postfixes.length + postfixes.findIndex((_, i) => size < Math.pow(1024, i + 1))) %
+    postfixes.length
+
+  return (size / Math.pow(1024, pfi)) + postfixes[pfi]
+}

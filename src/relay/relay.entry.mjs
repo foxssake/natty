@@ -46,4 +46,12 @@ export class RelayEntry {
   equals (other) {
     return this.address.equals(other.address) && this.port === other.port
   }
+
+  /**
+  * Relay identifier
+  * @type {string}
+  */
+  get id () {
+    return `${this.address}@${this.port}`
+  }
 }
