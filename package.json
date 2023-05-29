@@ -1,6 +1,6 @@
 {
-  "name": "@foxssake/natty",
-  "version": "0.13.1",
+  "name": "@foxssake/noray",
+  "version": "0.13.2",
   "description": "Online multiplayer orchestrator and potential game platform",
   "main": "src/natty.mjs",
   "bin": {
@@ -28,9 +28,6 @@
     "utap": "^0.2.0"
   },
   "dependencies": {
-    "@elementbound/nlon": "^1.2.1",
-    "@elementbound/nlon-socket": "^1.2.1",
-    "ajv": "^8.12.0",
     "dotenv": "^16.0.3",
     "nanoid": "^4.0.1",
     "pino": "^8.11.0"
