@@ -3,7 +3,7 @@ import { NetAddress } from "./net.address.mjs";
 import { RelayEntry } from "./relay.entry.mjs";
 import { UDPRelayHandler } from "./udp.relay.handler.mjs";
 
-const log = logger.getChild({ name: 'DynamicRelaying' })
+const log = logger.child({ name: 'DynamicRelaying' })
 
 /**
 * Implementation for dynamic relaying.
