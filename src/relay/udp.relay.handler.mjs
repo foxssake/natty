@@ -124,7 +124,7 @@ export class UDPRelayHandler extends EventEmitter {
 
     if (!senderRelay || !targetRelay) {
       // We don't have a relay for the sender, target, or both
-      this.emit('drop', senderRelay, targetRelay, msg)
+      this.emit('drop', senderRelay, targetRelay, sender, target, msg)
       return false
     }
 
@@ -207,5 +207,7 @@ export class UDPRelayHandler extends EventEmitter {
 * @event UDPRelayHandler#drop
 * @param {RelayEntry} sourceRelay Source relay
 * @param {RelayEntry} targetRelay Target relay
+* @param {NetAddress} sourceAddress Source address
+* @param {number} targetPort Target port
 * @param {Buffer} message Message
 */
