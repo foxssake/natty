@@ -7,6 +7,7 @@ import logger from '../logger.mjs'
 import { formatByteSize, formatDuration } from '../utils.mjs'
 import { UDPRemoteRegistrar } from './udp.remote.registrar.mjs'
 import { hostRepository } from '../hosts/host.mjs'
+import { useDynamicRelay } from './dynamic.relaying.mjs'
 
 export const udpRelayHandler = new UDPRelayHandler()
 constrainRelayTableSize(udpRelayHandler, config.udpRelay.maxSlots)
@@ -51,6 +52,9 @@ Noray.hook(noray => {
 
   constrainLifetime(udpRelayHandler, config.udpRelay.maxLifetimeDuration)
   constrainTraffic(udpRelayHandler, config.udpRelay.maxLifetimeTraffic)
+
+  log.info('Applying dynamic relaying')
+  useDynamicRelay(udpRelayHandler)
 
   log.info('Adding shutdown hooks')
   noray.on('close', () => {
