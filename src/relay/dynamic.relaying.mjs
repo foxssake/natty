@@ -1,7 +1,9 @@
-import logger from "../logger.mjs";
-import { NetAddress } from "./net.address.mjs";
-import { RelayEntry } from "./relay.entry.mjs";
-import { UDPRelayHandler } from "./udp.relay.handler.mjs";
+/* eslint-disable */
+import { NetAddress } from './net.address.mjs'
+import { UDPRelayHandler } from './udp.relay.handler.mjs'
+/* eslint-enable */
+import logger from '../logger.mjs'
+import { RelayEntry } from './relay.entry.mjs'
 
 const log = logger.child({ name: 'DynamicRelaying' })
 
