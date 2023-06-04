@@ -114,6 +114,7 @@ export class UDPRelayHandler extends EventEmitter {
   * @param {number} target Target port
   * @returns {Promise<boolean>} True on success
   * @fires UDPRelayHandler#transmit
+  * @fires UDPRelayHandler#drop
   */
   relay (msg, sender, target) {
     const senderRelay = this.#relayTable.find(r =>
@@ -123,6 +124,7 @@ export class UDPRelayHandler extends EventEmitter {
 
     if (!senderRelay || !targetRelay) {
       // We don't have a relay for the sender, target, or both
+      this.emit('drop', senderRelay, targetRelay, msg)
       return false
     }
 
@@ -132,7 +134,7 @@ export class UDPRelayHandler extends EventEmitter {
       return false
     }
 
-    this.emit('transmit', senderRelay, targetRelay)
+    this.emit('transmit', senderRelay, targetRelay, msg)
 
     socket.send(msg, targetRelay.address.port, targetRelay.address.address)
 
@@ -195,4 +197,15 @@ export class UDPRelayHandler extends EventEmitter {
 * freed.
 * @event UDPRelayHandler#destroy
 * @param {RelayEntry} relay Relay being freed.
+*/
+
+/**
+* Relay drop event.
+*
+* This event is emitted when a packet arrives for relay that we can't transfer
+* - usually because of an unknown node ( either sender or target).
+* @event UDPRelayHandler#drop
+* @param {RelayEntry} sourceRelay Source relay
+* @param {RelayEntry} targetRelay Target relay
+* @param {Buffer} message Message
 */

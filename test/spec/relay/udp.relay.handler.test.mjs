@@ -186,6 +186,8 @@ describe('UDPRelayHandler', () => {
       const socketPool = sinon.createStubInstance(UDPSocketPool)
       socketPool.getSocket.returns(socket)
 
+      const dropHandler = sinon.spy()
+
       const relayHandler = new UDPRelayHandler({
         socketPool
       })
@@ -197,6 +199,7 @@ describe('UDPRelayHandler', () => {
           port: 32279
         })
       }))
+      relayHandler.on('drop', dropHandler)
       socketPool.getSocket.resetHistory()
 
       // When
@@ -209,6 +212,7 @@ describe('UDPRelayHandler', () => {
       assert(!success, 'Relay succeeded?')
       assert(socketPool.getSocket.notCalled, 'Socket queried!')
       assert(socket.send.notCalled, 'Message sent?')
+      assert(dropHandler.calledOnce, 'Drop event not emitted!')
     })
     it('should ignore on missing socket', async () => {
       // Given
