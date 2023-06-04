@@ -5,10 +5,16 @@ import { Noray } from '../noray.mjs'
 import { cleanupUdpRelayTable } from './udp.relay.cleanup.mjs'
 import logger from '../logger.mjs'
 import { formatByteSize, formatDuration } from '../utils.mjs'
+import { UDPRemoteRegistrar } from './udp.remote.registrar.mjs'
+import { hostRepository } from '../hosts/host.mjs'
 
 export const udpRelayHandler = new UDPRelayHandler()
 constrainRelayTableSize(udpRelayHandler, config.udpRelay.maxSlots)
 
+export const udpRemoteRegistrar = new UDPRemoteRegistrar({
+  hostRepository,
+  udpRelayHandler
+})
 const log = logger.child({ name: 'mod:relay' })
 
 Noray.hook(noray => {
@@ -20,6 +26,9 @@ Noray.hook(noray => {
     () => cleanupUdpRelayTable(udpRelayHandler, config.udpRelay.timeout),
     config.udpRelay.cleanupInterval * 1000
   )
+
+  log.info('Listening on port %d for UDP remote registrars', config.udpRelay.registrarPort)
+  udpRemoteRegistrar.listen(config.udpRelay.registrarPort, config.socket.host)
 
   log.info(
     'Limiting relay bandwidth to %s/s and global bandwidth to %s/s',
